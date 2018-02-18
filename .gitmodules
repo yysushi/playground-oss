@@ -1,0 +1,3 @@
+[submodule "dockbix-xxl"]
+	path = dockbix-xxl
+	url = https://github.com/monitoringartist/dockbix-xxl
