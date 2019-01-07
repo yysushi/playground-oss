@@ -1,3 +1,6 @@
 [submodule "zabbix/dockbix-xxl"]
 	path = zabbix/dockbix-xxl
 	url = https://github.com/monitoringartist/dockbix-xxl
+[submodule "elk/elk-docker"]
+	path = elk/elk-docker
+	url = https://github.com/spujadas/elk-docker
