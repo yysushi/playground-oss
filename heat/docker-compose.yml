@@ -1,0 +1,44 @@
+---
+
+version: '3'
+services:
+  mysql:
+    image: mysql:5.5
+    environment:
+      MYSQL_ROOT_PASSWORD: root_pass
+  keystone:
+    build: docker/keystone
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_pass
+      KEYSTONE_DBPASS: keystone_pass
+      OS_ADMIN_PASSWORD: admin_pass
+      OS_DEMO_PASSWORD: demo_pass
+    hostname: keystone
+    depends_on:
+      - mysql
+  rabbitmq:
+    image: rabbitmq:3
+    environment:
+      RABBITMQ_DEFAULT_USER: rabbitmq_user
+      RABBITMQ_DEFAULT_PASS: rabbitmq_pass
+  heat:
+    build: docker/heat
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_ROOT_PASSWORD: root_pass
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 3306
+      RABBITMQ_DEFAULT_PASS: rabbitmq_pass
+      MYSQL_ROOT_PASSWORD: root_pass
+      HEAT_DBPASS: heat_pass
+      OS_ADMIN_PASSWORD: admin_pass
+      OS_DEMO_PASSWORD: demo_pass
+    hostname: heat
+    depends_on:
+      - mysql
+      - rabbitmq
+      - keystone
+    command: sleep 10000
