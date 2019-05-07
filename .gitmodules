@@ -4,6 +4,3 @@
 [submodule "elk/elk-docker"]
 	path = elk/elk-docker
 	url = https://github.com/spujadas/elk-docker
-[submodule "heat"]
-	path = heat/heat
-	url = https://github.com/openstack/heat
