@@ -1,0 +1,15 @@
+---
+
+version: '3'
+services:
+  mockserver:
+    image: jamesdbloom/mockserver
+    hostname: mockserver
+  myapp:
+    image: "python"
+    volumes:
+      - ./myapp:/myapp
+    environment:
+      - PORT=1080
+      - HOST=mockserver
+    command: ["python", "/myapp/myapp.py"]
