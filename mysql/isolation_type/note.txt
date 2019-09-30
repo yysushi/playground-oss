@@ -1,4 +1,4 @@
-docker run --name playground-db -p 3306:3306 -v $(pwd)/initdb:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=password mariadb:5
+docker run --name playground-oss -p 3306:3306 -e MYSQL_DATABASE=mydb -e MYSQL_ROOT_PASSWORD=password mariadb:5
 
 http://nippondanji.blogspot.com/2013/12/innodbrepeatable-readlocking-read.html
 https://yoku0825.blogspot.com/2017/05/mysqlselect-for-updaterepeatable-read.html

@@ -8,19 +8,56 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+type MyTx struct {
+	*sql.Tx
+	done bool
+}
+
+func (tx *MyTx) Rollback() error{
+	tx.done = true
+	return tx.Tx.Rollback()
+}
+
+func (tx *MyTx) Commit() error{
+	tx.done = true
+	return tx.Tx.Commit()
+}
+
 var (
 	db *sql.DB
+	tx1, tx2 *MyTx
+	err      error
 )
 
-func TestMain(m *testing.M) {
-	// setup
-	var err error
-	db, err = sql.Open("mysql", "user:password@/dbname")
+func setUp() {
+	var tx *sql.Tx
+	tx, err = db.Begin()
 	if err != nil {
 		panic(err)
 	}
-	defer db.Close()
+	tx1 = &MyTx{tx, false}
+	tx, err = db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	tx2 = &MyTx{tx, false}
+}
 
+func tearDown() {
+	if !tx1.done {
+		tx1.Commit()
+	}
+	if !tx2.done {
+		tx2.Commit()
+	}
+}
+
+func TestMain(m *testing.M) {
+	// setup
+	db, err = sql.Open("mysql", "root:password@/mydb")
+	if err != nil {
+		panic(err)
+	}
 	var dropTable string = `
 DROP TABLE IF EXISTS users
 `
@@ -39,73 +76,68 @@ CREATE TABLE users (
 	if err != nil {
 		panic(err)
 	}
-	db.Exec("INSERT INTO users (id, name, active) VALUES (?, ?, ?)", "123", "user1", false)
+	_, err = db.Exec("INSERT INTO users (id, name, active) VALUES (?, ?, ?)", "123", "user1", false)
+	if err != nil {
+		panic(err)
+	}
 	// run test
 	retCode := m.Run()
 	// tear down
+	db.Close()
 	// exit
 	os.Exit(retCode)
 }
 
 func TestDefaultIsolationLevel(t *testing.T) {
-	tx, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer tx.Commit()
+	setUp()
+	defer tearDown()
 	var isolationLevel string
-	err = tx.QueryRow("SELECT @@TX_ISOLATION;").Scan(&isolationLevel)
+	err = tx1.QueryRow("SELECT @@TX_ISOLATION;").Scan(&isolationLevel)
 	if err != nil {
 		panic(err)
 	}
-	// if isolationLevel != sql.LevelRepeatableRead.String() {
-	// 	t.Errorf("default isolation level is %s; want %s", isolationLevel, sql.LevelRepeatableRead)
-	// }
 	if isolationLevel != "REPEATABLE-READ" {
-		t.Errorf("expect REPEATABLE-READ, but %s", isolationLevel)
+		t.Fatalf("expect REPEATABLE-READ, but %s", isolationLevel)
 	}
 }
 
-func TestRepetableRead(t *testing.T) {
-	tx1, err := db.Begin()
+func TestRepetableReadEvenOthersChange(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
 	if err != nil {
 		panic(err)
 	}
-	tx2, err := db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	defer tx1.Commit()
+	// when
 	var active bool
-	tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
-	if active {
-		t.Errorf("expect false, but %t", active)
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
 	}
-	tx2.Exec("UPDATE users SET active = ?", true)
-	tx2.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
-	if !active {
-		t.Errorf("expect true, but %t", active)
-	}
-	tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	// then
 	if active {
-		t.Errorf("expect false, but %t", active)
+		t.Fatalf("expect false, but %t", active)
+	}
+}
+
+func TestRepetableReadEvenOthersCommitChange(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
+	if err != nil {
+		panic(err)
 	}
 	tx2.Commit()
-	tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
-	if active {
-		t.Errorf("expect false, but %t", active)
-	}
-	tx1.Exec("UPDATE users SET name = ?", "user2")
-	tx1.Commit()
-	var name string
-	err = db.QueryRow("SELECT name, active FROM users WHERE id='123'").Scan(&name, &active)
+	// when
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
 	if err != nil {
 		panic(err)
 	}
-	if !active {
-		t.Errorf("expect false, but %t", active)
-	}
-	if name != "user2" {
-		t.Errorf("expect user2, but %s", name)
+	// then
+	if active {
+		t.Fatalf("expect false, but %t", active)
 	}
 }
