@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	defer db.Close()
 
 	var dropTable string = `
-DROP TABLE users
+DROP TABLE IF EXISTS users
 `
 	_, err = db.Exec(dropTable)
 	if err != nil {

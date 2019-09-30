@@ -1,0 +1,9 @@
+docker run --name playground-db -p 3306:3306 -v $(pwd)/initdb:/docker-entrypoint-initdb.d -e MYSQL_ROOT_PASSWORD=password mariadb:5
+
+http://nippondanji.blogspot.com/2013/12/innodbrepeatable-readlocking-read.html
+https://yoku0825.blogspot.com/2017/05/mysqlselect-for-updaterepeatable-read.html
+https://dev.mysql.com/doc/refman/5.6/ja/glossary.html#glos_exclusive_lock
+
+https://stackoverflow.com/questions/4034976/difference-between-read-commit-and-repeatable-read/4036063#4036063
+
+https://stackoverflow.com/questions/10935850/when-to-use-select-for-update?answertab=votes#tab-top
