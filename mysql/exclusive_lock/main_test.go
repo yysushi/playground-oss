@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"os"
+	"strings"
 	"testing"
 	"time"
 
@@ -26,7 +27,7 @@ func (tx *MyTx) Commit() error {
 }
 
 var (
-	db       *sql.DB
+	db, db2  *sql.DB
 	tx1, tx2 *MyTx
 	err      error
 )
@@ -38,7 +39,7 @@ func setUp() {
 		panic(err)
 	}
 	tx1 = &MyTx{tx, false}
-	tx, err = db.Begin()
+	tx, err = db2.Begin()
 	if err != nil {
 		panic(err)
 	}
@@ -57,6 +58,10 @@ func tearDown() {
 func TestMain(m *testing.M) {
 	// setup
 	db, err = sql.Open("mysql", "root:password@/mydb")
+	if err != nil {
+		panic(err)
+	}
+	db2, err = sql.Open("mysql", "root:password@/mydb")
 	if err != nil {
 		panic(err)
 	}
