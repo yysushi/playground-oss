@@ -42,6 +42,13 @@ DROP TABLE IF EXISTS users
 	if err != nil {
 		panic(err)
 	}
+	var dropTable2 string = `
+DROP TABLE IF EXISTS users2
+`
+	_, err = db.Exec(dropTable2)
+	if err != nil {
+		panic(err)
+	}
 	var createTable string = `
 CREATE TABLE users (
   id varchar(255) NOT NULL,
@@ -58,6 +65,21 @@ CREATE TABLE users (
 		panic(err)
 	}
 	_, err = db.Exec("INSERT INTO users (id, name, active) VALUES (?, ?, ?)", "124", "user2", false)
+	if err != nil {
+		panic(err)
+	}
+	var createTable2 string = `
+CREATE TABLE users2 (
+  id varchar(255) NOT NULL,
+  name text,
+  active boolean,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;`
+	_, err = db.Exec(createTable2)
+	if err != nil {
+		panic(err)
+	}
+	_, err = db.Exec("INSERT INTO users2 (id, name, active) VALUES (?, ?, ?)", "123", "user1", false)
 	if err != nil {
 		panic(err)
 	}
@@ -120,6 +142,7 @@ func TestNoDirtyRead(t *testing.T) {
 	}
 }
 
+// func TestRepeatableRead
 func TestNoFuzzyRead(t *testing.T) {
 	setUp()
 	defer tearDown()
@@ -149,6 +172,7 @@ func TestNoFuzzyRead(t *testing.T) {
 	}
 }
 
+// func TestRepeatableReadByOtherRowRead
 func TestNoFuzzyReadByOtherRowRead(t *testing.T) {
 	setUp()
 	defer tearDown()
@@ -160,6 +184,32 @@ func TestNoFuzzyReadByOtherRowRead(t *testing.T) {
 	}
 	if active {
 		t.Fatalf("expect false, but %t", active)
+	}
+	// given2
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
+	if err != nil {
+		panic(err)
+	}
+	tx2.Commit()
+	// when
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	// then
+	if active {
+		t.Fatalf("expect false, but %t", active)
+	}
+}
+
+func TestNoFuzzyReadByOtherTableRowRead(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given1
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users2 WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
 	}
 	// given2
 	_, err = tx2.Exec("UPDATE users SET active = ?", true)
