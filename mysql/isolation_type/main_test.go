@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-	"os"
+	"strings"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -13,47 +13,24 @@ type MyTx struct {
 	done bool
 }
 
-func (tx *MyTx) Rollback() error{
+func (tx *MyTx) Rollback() error {
 	tx.done = true
 	return tx.Tx.Rollback()
 }
 
-func (tx *MyTx) Commit() error{
+func (tx *MyTx) Commit() error {
 	tx.done = true
 	return tx.Tx.Commit()
 }
 
 var (
-	db *sql.DB
+	db       *sql.DB
 	tx1, tx2 *MyTx
 	err      error
 )
 
 func setUp() {
-	var tx *sql.Tx
-	tx, err = db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	tx1 = &MyTx{tx, false}
-	tx, err = db.Begin()
-	if err != nil {
-		panic(err)
-	}
-	tx2 = &MyTx{tx, false}
-}
-
-func tearDown() {
-	if !tx1.done {
-		tx1.Commit()
-	}
-	if !tx2.done {
-		tx2.Commit()
-	}
-}
-
-func TestMain(m *testing.M) {
-	// setup
+	// db
 	db, err = sql.Open("mysql", "root:password@/mydb")
 	if err != nil {
 		panic(err)
@@ -80,12 +57,34 @@ CREATE TABLE users (
 	if err != nil {
 		panic(err)
 	}
-	// run test
-	retCode := m.Run()
-	// tear down
+	_, err = db.Exec("INSERT INTO users (id, name, active) VALUES (?, ?, ?)", "124", "user2", false)
+	if err != nil {
+		panic(err)
+	}
+	// transaction
+	var tx *sql.Tx
+	tx, err = db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	tx1 = &MyTx{tx, false}
+	tx, err = db.Begin()
+	if err != nil {
+		panic(err)
+	}
+	tx2 = &MyTx{tx, false}
+}
+
+func tearDown() {
+	// transaction
+	if !tx1.done {
+		tx1.Commit()
+	}
+	if !tx2.done {
+		tx2.Commit()
+	}
+	// db
 	db.Close()
-	// exit
-	os.Exit(retCode)
 }
 
 func TestDefaultIsolationLevel(t *testing.T) {
@@ -101,7 +100,7 @@ func TestDefaultIsolationLevel(t *testing.T) {
 	}
 }
 
-func TestRepetableReadEvenOthersChange(t *testing.T) {
+func TestNoDirtyRead(t *testing.T) {
 	setUp()
 	defer tearDown()
 	// given
@@ -121,17 +120,25 @@ func TestRepetableReadEvenOthersChange(t *testing.T) {
 	}
 }
 
-func TestRepetableReadEvenOthersCommitChange(t *testing.T) {
+func TestNoFuzzyRead(t *testing.T) {
 	setUp()
 	defer tearDown()
-	// given
+	// given1
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	if active {
+		t.Fatalf("expect false, but %t", active)
+	}
+	// given2
 	_, err = tx2.Exec("UPDATE users SET active = ?", true)
 	if err != nil {
 		panic(err)
 	}
 	tx2.Commit()
 	// when
-	var active bool
 	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
 	if err != nil {
 		panic(err)
@@ -139,5 +146,80 @@ func TestRepetableReadEvenOthersCommitChange(t *testing.T) {
 	// then
 	if active {
 		t.Fatalf("expect false, but %t", active)
+	}
+}
+
+func TestNoFuzzyReadByOtherRowRead(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given1
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='124'").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	if active {
+		t.Fatalf("expect false, but %t", active)
+	}
+	// given2
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
+	if err != nil {
+		panic(err)
+	}
+	tx2.Commit()
+	// when
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	// then
+	if active {
+		t.Fatalf("expect false, but %t", active)
+	}
+}
+
+func TestSimilarDirtyReadWithLock(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
+	if err != nil {
+		panic(err)
+	}
+	// when
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123' FOR UPDATE").Scan(&active)
+	// then
+	if strings.Index(err.Error(), "Error 1205: Lock wait timeout exceeded; try restarting transaction") == -1 {
+		panic(err)
+	}
+}
+
+func TestSimilarFuzzyReadWithLock(t *testing.T) {
+	setUp()
+	defer tearDown()
+	// given1
+	var active bool
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123'").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	if active {
+		t.Fatalf("expect false, but %t", active)
+	}
+	// given2
+	_, err = tx2.Exec("UPDATE users SET active = ?", true)
+	if err != nil {
+		panic(err)
+	}
+	tx2.Commit()
+	// when
+	err = tx1.QueryRow("SELECT active FROM users WHERE id='123' FOR UPDATE").Scan(&active)
+	if err != nil {
+		panic(err)
+	}
+	// then
+	if !active {
+		t.Fatalf("expect true, but %t", active)
 	}
 }
