@@ -1,0 +1,9 @@
+---
+
+version: '3'
+services:
+  registry:
+    image: "registry:2"
+  docker:
+    image: "docker:dind"
+    privileged: true
