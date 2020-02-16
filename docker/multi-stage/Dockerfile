@@ -1,9 +1,8 @@
 FROM golang:alpine AS builder
 
-WORKDIR $GOPATH/src/multi-stage
-COPY hello.go .
+WORKDIR $GOPATH/src/somewhere/multi-stage
+COPY . .
 RUN go install
 
 FROM alpine:latest
-WORKDIR /root/
-COPY --from=builder /go/bin/multi-stage .
+COPY --from=builder /go/bin/multi-stage /usr/local/bin/
