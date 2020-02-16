@@ -1,6 +1,6 @@
 # Note for docker layer
 
-
+We should consider docker image layer and pack multiple commands to one with using "&&" if needed.
 
 - image sizes
 
