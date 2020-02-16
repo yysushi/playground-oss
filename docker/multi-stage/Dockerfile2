@@ -1,0 +1,2 @@
+FROM alpine
+COPY --from=builderimage /go/bin/multi-stage /usr/local/bin/

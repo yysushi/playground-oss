@@ -1,6 +1,8 @@
 # Note for docker multi-stage
 
-- log
+<https://docs.docker.com/develop/develop-images/multistage-build/>
+
+- simple
 
 ```shell-session
 koketani:multi-stage (master>)$ docker build .
@@ -111,4 +113,36 @@ koketani:multi-stage (master>)$ docker image inspect a606fbcc7651
         }
     }
 ]
+```
+
+- stop at a specific build stage
+
+```shell-session
+koketani:multi-stage (master *%>)$ docker build --target builder -t builderimage -f Dockerfile .
+Sending build context to Docker daemon  8.704kB
+Step 1/4 : FROM golang:alpine AS builder
+ ---> e1fd9820be16
+Step 2/4 : WORKDIR $GOPATH/src/somewhere/multi-stage
+ ---> Using cache
+ ---> ef2aedf85f4f
+Step 3/4 : COPY . .
+ ---> c7895b8669d6
+Step 4/4 : RUN go install
+ ---> Running in 51596ec06a94
+Removing intermediate container 51596ec06a94
+ ---> fb8613ac1e62
+Successfully built fb8613ac1e62
+Successfully tagged builderimage:latest
+```
+
+- external
+```
+koketani:multi-stage (master *%>)$ docker build -f Dockerfile2 .
+Sending build context to Docker daemon  8.704kB
+Step 1/2 : FROM alpine
+ ---> e7d92cdc71fe
+Step 2/2 : COPY --from=builderimage /go/bin/multi-stage /usr/local/bin/
+ ---> Using cache
+ ---> a606fbcc7651
+Successfully built a606fbcc7651
 ```
