@@ -24,6 +24,11 @@ Step 6/6 : COPY --from=builder /go/bin/multi-stage /usr/local/bin/
  ---> Using cache
  ---> a606fbcc7651
 Successfully built a606fbcc7651
+koketani:multi-stage (master *+>)$ docker history a606fbcc7651
+IMAGE               CREATED             CREATED BY                                      SIZE                COMMENT
+a606fbcc7651        2 weeks ago         /bin/sh -c #(nop) COPY file:f9e0376c5638a44e…   2.01MB
+e7d92cdc71fe        6 weeks ago         /bin/sh -c #(nop)  CMD ["/bin/sh"]              0B
+<missing>           6 weeks ago         /bin/sh -c #(nop) ADD file:e69d441d729412d24…   5.59MB
 koketani:multi-stage (master>)$ docker image inspect a606fbcc7651
 [
     {
@@ -136,7 +141,8 @@ Successfully tagged builderimage:latest
 ```
 
 - external
-```
+
+```shell-session
 koketani:multi-stage (master *%>)$ docker build -f Dockerfile2 .
 Sending build context to Docker daemon  8.704kB
 Step 1/2 : FROM alpine
