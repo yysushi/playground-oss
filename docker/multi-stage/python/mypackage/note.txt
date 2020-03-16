@@ -1,0 +1,108 @@
+
+koketani:mypackage (master *%>)$ docker build --no-cache -t mypackage .
+Sending build context to Docker daemon   12.8kB
+Step 1/5 : FROM python:3.8.2
+ ---> f88b2f81f83a
+Step 2/5 : WORKDIR /src
+ ---> Running in b43abaf741a2
+Removing intermediate container b43abaf741a2
+ ---> 9574a2f2e6c1
+Step 3/5 : COPY . .
+ ---> 0382aa826f93
+Step 4/5 : ENV PYTHONPATH /mypackage/lib/python3.8/site-packages
+ ---> Running in 90939a809900
+Removing intermediate container 90939a809900
+ ---> 39396f9cfaa7
+Step 5/5 : RUN mkdir -p ${PYTHONPATH}  && python setup.py install --prefix /mypackage
+ ---> Running in dfdc24bd83c6
+running install
+running bdist_egg
+running egg_info
+creating mypackage.egg-info
+writing mypackage.egg-info/PKG-INFO
+writing dependency_links to mypackage.egg-info/dependency_links.txt
+writing requirements to mypackage.egg-info/requires.txt
+writing top-level names to mypackage.egg-info/top_level.txt
+writing manifest file 'mypackage.egg-info/SOURCES.txt'
+reading manifest file 'mypackage.egg-info/SOURCES.txt'
+writing manifest file 'mypackage.egg-info/SOURCES.txt'
+installing library code to build/bdist.linux-x86_64/egg
+running install_lib
+running build_py
+creating build
+creating build/lib
+creating build/lib/mypackage
+copying mypackage/__init__.py -> build/lib/mypackage
+creating build/bdist.linux-x86_64
+creating build/bdist.linux-x86_64/egg
+creating build/bdist.linux-x86_64/egg/mypackage
+copying build/lib/mypackage/__init__.py -> build/bdist.linux-x86_64/egg/mypackage
+byte-compiling build/bdist.linux-x86_64/egg/mypackage/__init__.py to __init__.cpython-38.pyc
+creating build/bdist.linux-x86_64/egg/EGG-INFO
+copying mypackage.egg-info/PKG-INFO -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mypackage.egg-info/SOURCES.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mypackage.egg-info/dependency_links.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+copying mypackage.egg-info/requires.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+zip_safe flag not set; analyzing archive contents...
+copying mypackage.egg-info/top_level.txt -> build/bdist.linux-x86_64/egg/EGG-INFO
+creating dist
+creating 'dist/mypackage-1.0.2-py3.8.egg' and adding 'build/bdist.linux-x86_64/egg' to it
+removing 'build/bdist.linux-x86_64/egg' (and everything under it)
+Creating /mypackage/lib/python3.8/site-packages/site.py
+Processing mypackage-1.0.2-py3.8.egg
+Copying mypackage-1.0.2-py3.8.egg to /mypackage/lib/python3.8/site-packages
+Adding mypackage 1.0.2 to easy-install.pth file
+
+Installed /mypackage/lib/python3.8/site-packages/mypackage-1.0.2-py3.8.egg
+Processing dependencies for mypackage==1.0.2
+Searching for requests
+Reading https://pypi.org/simple/requests/
+Downloading https://files.pythonhosted.org/packages/1a/70/1935c770cb3be6e3a8b78ced23d7e0f3b187f5cbfab4749523ed65d7c9b1/requests-2.23.0-py2.py3-none-any.whl#sha256=43999036bfa82904b6af1d99e4882b560e5e2c68e5c4b0aa03b655f3d7d73fee
+Best match: requests 2.23.0
+Processing requests-2.23.0-py2.py3-none-any.whl
+Installing requests-2.23.0-py2.py3-none-any.whl to /mypackage/lib/python3.8/site-packages
+Adding requests 2.23.0 to easy-install.pth file
+
+Installed /mypackage/lib/python3.8/site-packages/requests-2.23.0-py3.8.egg
+Searching for urllib3!=1.25.0,!=1.25.1,<1.26,>=1.21.1
+Reading https://pypi.org/simple/urllib3/
+Downloading https://files.pythonhosted.org/packages/e8/74/6e4f91745020f967d09332bb2b8b9b10090957334692eb88ea4afe91b77f/urllib3-1.25.8-py2.py3-none-any.whl#sha256=2f3db8b19923a873b3e5256dc9c2dedfa883e33d87c690d9c7913e1f40673cdc
+Best match: urllib3 1.25.8
+Processing urllib3-1.25.8-py2.py3-none-any.whl
+Installing urllib3-1.25.8-py2.py3-none-any.whl to /mypackage/lib/python3.8/site-packages
+Adding urllib3 1.25.8 to easy-install.pth file
+
+Installed /mypackage/lib/python3.8/site-packages/urllib3-1.25.8-py3.8.egg
+Searching for idna<3,>=2.5
+Reading https://pypi.org/simple/idna/
+Downloading https://files.pythonhosted.org/packages/89/e3/afebe61c546d18fb1709a61bee788254b40e736cff7271c7de5de2dc4128/idna-2.9-py2.py3-none-any.whl#sha256=a068a21ceac8a4d63dbfd964670474107f541babbd2250d61922f029858365fa
+Best match: idna 2.9
+Processing idna-2.9-py2.py3-none-any.whl
+Installing idna-2.9-py2.py3-none-any.whl to /mypackage/lib/python3.8/site-packages
+Adding idna 2.9 to easy-install.pth file
+
+Installed /mypackage/lib/python3.8/site-packages/idna-2.9-py3.8.egg
+Searching for chardet<4,>=3.0.2
+Reading https://pypi.org/simple/chardet/
+Downloading https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl#sha256=fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691
+Best match: chardet 3.0.4
+Processing chardet-3.0.4-py2.py3-none-any.whl
+Installing chardet-3.0.4-py2.py3-none-any.whl to /mypackage/lib/python3.8/site-packages
+Adding chardet 3.0.4 to easy-install.pth file
+Installing chardetect script to /mypackage/bin
+
+Installed /mypackage/lib/python3.8/site-packages/chardet-3.0.4-py3.8.egg
+Searching for certifi>=2017.4.17
+Reading https://pypi.org/simple/certifi/
+Downloading https://files.pythonhosted.org/packages/b9/63/df50cac98ea0d5b006c55a399c3bf1db9da7b5a24de7890bc9cfd5dd9e99/certifi-2019.11.28-py2.py3-none-any.whl#sha256=017c25db2a153ce562900032d5bc68e9f191e44e9a0f762f373977de9df1fbb3
+Best match: certifi 2019.11.28
+Processing certifi-2019.11.28-py2.py3-none-any.whl
+Installing certifi-2019.11.28-py2.py3-none-any.whl to /mypackage/lib/python3.8/site-packages
+Adding certifi 2019.11.28 to easy-install.pth file
+
+Installed /mypackage/lib/python3.8/site-packages/certifi-2019.11.28-py3.8.egg
+Finished processing dependencies for mypackage==1.0.2
+Removing intermediate container dfdc24bd83c6
+ ---> 782a2ed1a3f3
+Successfully built 782a2ed1a3f3
+Successfully tagged mypackage:latest
