@@ -1,0 +1,2 @@
+git+git://github.com/koketani/playground-oss.git#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
+# git+https://github.com/koketani/playground-oss.git#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
