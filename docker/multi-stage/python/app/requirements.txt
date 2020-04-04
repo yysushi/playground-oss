@@ -1,2 +1,3 @@
-git+git://github.com/koketani/playground-oss.git#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
+-e git+ssh://git@github.com/koketani/playground-oss.git@1.0.2#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
+# git+git://github.com/koketani/playground-oss.git#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
 # git+https://github.com/koketani/playground-oss.git#egg=mypackage&subdirectory=docker/multi-stage/python/mypackage
