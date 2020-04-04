@@ -15,3 +15,6 @@ koketani:nginx (master %>)$ curl localhost:8080
 Hello world
 </body>
 </html>
+
+koketani:nginx (master>)$ docker cp some-nginx:/etc/nginx/nginx.conf ./
+koketani:nginx (master %>)$ docker cp some-nginx:/etc/nginx/conf.d/default.conf ./
