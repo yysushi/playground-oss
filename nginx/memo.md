@@ -43,3 +43,9 @@ koketani:nginx (master>)$ docker logs fc739aad723155af83738f3c656d1fa31cfa74da82
 172.17.0.1 - - [04/Apr/2020:13:24:03 +0000] "GET /index.html HTTP/1.1" 200 88 "-" "curl/7.54.0" "-"
 172.17.0.1 - - [04/Apr/2020:13:24:04 +0000] "GET /index.html HTTP/1.1" 200 88 "-" "curl/7.54.0" "-"
 ```
+
+## Documentation
+
+<https://nginx.org/en/docs/>
+
+<https://nginx.org/en/docs/beginners_guide.html>
