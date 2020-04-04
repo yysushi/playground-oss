@@ -1,3 +1,8 @@
+# Note for Niginx
+
+## Installation
+
+```shell-session
 koketani:nginx (master>)$ docker image ls | grep nginx
 nginx                                               latest              ed21b7a8aee9        4 days ago          127MB
 koketani:nginx (master %>)$ mkdir html
@@ -17,5 +22,24 @@ koketani:nginx (master %>)$ curl localhost:8080
 Hello world
 </body>
 </html>
+```
 
+```shell-session
 koketani:nginx (master *>)$ docker cp some-nginx:/etc/nginx/. etc/nginx
+```
+
+## Logging
+
+```shell-session
+root@fc739aad7231:/# ls -l /var/log/nginx/
+total 0
+lrwxrwxrwx 1 root root 11 Mar 31 03:19 access.log -> /dev/stdout
+lrwxrwxrwx 1 root root 11 Mar 31 03:19 error.log -> /dev/stderr
+```
+
+```shell-session
+koketani:nginx (master>)$ docker logs fc739aad723155af83738f3c656d1fa31cfa74da8278e724f1347ddec6005b74
+172.17.0.1 - - [04/Apr/2020:13:23:31 +0000] "GET /index.html HTTP/1.1" 200 88 "-" "curl/7.54.0" "-"
+172.17.0.1 - - [04/Apr/2020:13:24:03 +0000] "GET /index.html HTTP/1.1" 200 88 "-" "curl/7.54.0" "-"
+172.17.0.1 - - [04/Apr/2020:13:24:04 +0000] "GET /index.html HTTP/1.1" 200 88 "-" "curl/7.54.0" "-"
+```
