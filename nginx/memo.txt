@@ -1,3 +1,5 @@
+koketani:nginx (master>)$ docker image ls | grep nginx
+nginx                                               latest              ed21b7a8aee9        4 days ago          127MB
 koketani:nginx (master %>)$ mkdir html
 koketani:nginx (master %>)$ cat html/index.html
 <html>
