@@ -1,0 +1,17 @@
+koketani:nginx (master %>)$ mkdir html
+koketani:nginx (master %>)$ cat html/index.html
+<html>
+<header><title>This is title</title></header>
+<body>
+Hello world
+</body>
+</html>
+koketani:nginx (master %>)$ docker run --name some-nginx -p 8080:80 -v $(pwd)/html:/usr/share/nginx/html:ro -d nginx
+6fc0757c5ff7f762b40d1dbda598c6966c8eb9eda79b71bb4ab1752ebae0370d
+koketani:nginx (master %>)$ curl localhost:8080
+<html>
+<header><title>This is title</title></header>
+<body>
+Hello world
+</body>
+</html>
