@@ -18,5 +18,4 @@ Hello world
 </body>
 </html>
 
-koketani:nginx (master>)$ docker cp some-nginx:/etc/nginx/nginx.conf ./
-koketani:nginx (master %>)$ docker cp some-nginx:/etc/nginx/conf.d/default.conf ./
+koketani:nginx (master *>)$ docker cp some-nginx:/etc/nginx/. etc/nginx
