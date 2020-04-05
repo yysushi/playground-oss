@@ -1,0 +1,43 @@
+http_x_forwarded_for => $http_name => X-Forwarded-For =>
+HTTPプロキシサーバまたは負荷分散装置（ロードバランサ）を経由してウェブサーバに接続するクライアントの送信元IPアドレスを特定する際のデファクトスタンダードである。
+https://ja.wikipedia.org/wiki/X-Forwarded-For (edited) 
+
+
+
+7:08
+client -> proxy -> upstream
+client <- proxy <- upstream
+7:09
+request_id => $request_id => X-Request-Id
+7:12
+proxy_set_header Host $http_host;
+proxy_set_header X-Real-IP $remote_addr;
+proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+proxy_set_header X-Request-Id $request_id;
+proxy_connect_timeout 5s;
+proxy_read_timeout    50s;
+proxy_send_timeout    50s;
+7:17
+remote_addr => X-Real-IP
+client address
+7:18
+X-Real-IP ($remote_addr) vs X-Forwarded-For ($http_x_forwarded_for, $proxy_add_x_forwarded_for)
+client -> proxy1 -> proxy2 -> upstream
+upstream can observe following HTTP headers.
+“X-Real-IP: proxy2”
+“X-Forwarded-For: proxy1, proxy2"
+http://nginx.org/en/docs/http/ngx_http_core_module.html#var_http_
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html (edited) 
+7:22
+$proxy_host vs $http_host vs $host
+proxy_host:
+name and port of a proxied server as specified in the proxy_pass directive;
+http_host: “Host” in http header. => http_name arbitrary request header field; the last part of a variable name is the field name converted to lower case with dashes replaced by underscores
+host: in this order of precedence: host name from the request line, or host name from the “Host” request header field, or the server name matching a request
+http://nginx.org/en/docs/http/ngx_http_core_module.html#var_http_
+http://nginx.org/en/docs/http/ngx_http_proxy_module.html#var_proxy_host (edited) 
+
+7:28 PM
+$http_name vs $sent_http_name
+http_name: arbitrary request header field; the last part of a variable name is the field name converted to lower case with dashes replaced by underscores
+sent_http_name: arbitrary response header field; the last part of a variable name is the field name converted to lower case with dashes replaced by underscores
