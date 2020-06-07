@@ -7,3 +7,6 @@
 [submodule "os/heat"]
 	path = os/heat
 	url = https://opendev.org/openstack/heat
+[submodule "os/kolla/kolla"]
+	path = os/kolla/kolla
+	url = https://github.com/openstack/kolla
