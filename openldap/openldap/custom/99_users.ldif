@@ -1,0 +1,16 @@
+dn: uid=johndoe,ou=People,dc=example,dc=org
+objectClass: top
+objectClass: person
+objectClass: posixAccount
+objectClass: shadowAccount
+objectClass: ldapPublicKey
+uid: johndoe
+cn: John Doe
+sn: Doe
+loginShell: /sbin/nologin
+uidNumber: 1000
+gidNumber: 1000
+homeDirectory: /home/johndoe
+description: This is an example user
+sshPublicKey: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE
+ TyLURmpRVOS6sLEy1wC9p4RO0BzgGZoZu5QDKMEKri
