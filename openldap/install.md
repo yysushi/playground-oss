@@ -6,6 +6,8 @@
 
 ## Environment
 
+please renew secrets and keys
+
 - create secrets
 
 ```shell-session
