@@ -73,7 +73,7 @@ services:
       - "2222:22"
     volumes:
       # persist ssh host keys
-      - ./bastion/keys:/etc/ssh/keys
+      - ./bastion/keys:/etc/ssh/keys:ro
       # mount user's google_authenticators
       - ./bastion/google_authenticators:/google_authenticators
       # use ca certificates created in advance
@@ -90,7 +90,7 @@ services:
       SSH_ENABLE_PASSWORD_AUTH: "true"
     volumes:
       - ./internal/entrypoint.d:/etc/entrypoint.d
-      - ./internal/keys/:/etc/ssh/keys
+      - ./internal/keys/:/etc/ssh/keys:ro
     depends_on:
       - openldap
 
