@@ -1,0 +1,5 @@
+dn: ou=People,dc=example,dc=org
+changetype: add
+ou: People
+objectClass: top
+objectClass: organizationalUnit

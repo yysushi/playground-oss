@@ -1,0 +1,98 @@
+---
+
+version: '3.8'
+services:
+  openldap:
+    image: osixia/openldap:1.4.0
+    environment:
+      # https://github.com/osixia/docker-openldap
+      # https://www.openldap.org/doc/admin24/slapdconfig.html
+      LDAP_LOG_LEVEL: "256"
+      LDAP_ORGANISATION: "Example Inc."
+      LDAP_DOMAIN: "example.org"
+      LDAP_BASE_DN: ""
+      LDAP_ADMIN_PASSWORD_FILE: "/run/secrets/authentication_admin_pw"
+      LDAP_CONFIG_PASSWORD_FILE: "/run/secrets/authentication_config_pw"
+      LDAP_READONLY_USER: "true"
+      LDAP_RFC2307BIS_SCHEMA: "false"
+      LDAP_BACKEND: "mdb"
+      LDAP_TLS: "true"
+      LDAP_TLS_CRT_FILENAME: "ldap.crt"
+      LDAP_TLS_KEY_FILENAME: "ldap.key"
+      LDAP_TLS_DH_PARAM_FILENAME: "dhparam.pem"
+      LDAP_TLS_CA_CRT_FILENAME: "ca.crt"
+      LDAP_TLS_ENFORCE: "false"
+      LDAP_TLS_CIPHER_SUITE: "SECURE256:-VERS-SSL3.0"
+      LDAP_TLS_VERIFY_CLIENT: "never"
+      LDAP_REPLICATION: "false"
+      KEEP_EXISTING_CONFIG: "false"
+      LDAP_REMOVE_CONFIG_AFTER_SETUP: "true"
+      LDAP_SSL_HELPER_PREFIX: "ldap"
+    tty: true
+    stdin_open: true
+    volumes:
+      # persist LDAP database files
+      - /var/lib/ldap
+      # persist LDAP config files
+      - /etc/ldap/slapd.d
+      # custom ldifs
+      - ./openldap/custom:/container/service/slapd/assets/config/bootstrap/ldif/custom
+      # persist certifications
+      - /container/service/slapd/assets/certs
+    ports:
+      - "389:389"
+      - "636:636"
+    domainname: "example.org"
+    hostname: "ldap-server"
+    secrets:
+      - authentication_admin_pw
+      - authentication_config_pw
+    networks:
+      default:
+        aliases:
+          - ldap-server
+    command: --copy-service
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8080:80"
+    depends_on:
+      - openldap
+  bastion:
+    image: koketani/bastion
+    build:
+      context: bastion
+      dockerfile: Dockerfile
+    ports:
+      - "2222:22"
+    volumes:
+      # persist ssh host keys
+      - /etc/ssh/keys
+      # mount user's google_authenticators
+      - ./bastion/google_authenticators:/google_authenticators
+      # use ca certificates created in advance
+      - ./bastion/certs:/usr/share/ca-certificates/ldap
+    depends_on:
+      - openldap
+    hostname: bastion
+  internal:
+    image: panubo/sshd:1.2.1
+    hostname: internal
+    container_name: internal
+    environment:
+      SSH_USERS: "user:1000:1000"
+      SSH_ENABLE_PASSWORD_AUTH: "true"
+    volumes:
+      - ./internal/entrypoint.d:/etc/entrypoint.d
+      - /etc/ssh/keys
+    depends_on:
+      - openldap
+
+secrets:
+  authentication_admin_pw:
+    external: true
+  authentication_config_pw:
+    external: true

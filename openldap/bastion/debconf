@@ -1,0 +1,19 @@
+# ldap-auth-config
+# ldap-auth-config ldap-auth-config/rootbindpw
+ldap-auth-config ldap-auth-config/bindpw string readonly
+ldap-auth-config ldap-auth-config/dblogin boolean true
+ldap-auth-config ldap-auth-config/ldapns/ldap_version select 1
+ldap-auth-config ldap-auth-config/override boolean true
+ldap-auth-config ldap-auth-config/move-to-debconf boolean true
+ldap-auth-config ldap-auth-config/binddn string cn=readonly,dc=example,dc=org
+# ldap-auth-config ldap-auth-config/rootbinddn
+ldap-auth-config ldap-auth-config/ldapns/ldap-server string ldaps://ldap-server
+ldap-auth-config ldap-auth-config/pam_password select crypt
+ldap-auth-config ldap-auth-config/dbrootlogin boolean false
+ldap-auth-config ldap-auth-config/ldapns/base-dn string dc=example,dc=org
+
+# openssh-server
+openssh-server openssh-server/password-authentication boolean false
+# true means choosing default option (prohibit-password)
+# https://salsa.debian.org/ssh-team/openssh/-/commit/de911c73504da8dd7d9bbaddcf0c0845dd6eb9a0#a0a04b9b5fca2a140e12633c5be104b02bf1edd4_172_78
+openssh-server openssh-server/permit-root-login boolean true
