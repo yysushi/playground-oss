@@ -1,5 +1,0 @@
-dn: ou=Group,dc=example,dc=org
-changetype: add
-ou: Group
-objectClass: top
-objectClass: organizationalUnit

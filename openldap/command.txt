@@ -1,1 +1,0 @@
-ssh -o ProxyCommand="ssh -W %h:%p localhost -p 2222 -i johndoe/id_rsa -l johndoe" user@internal
