@@ -18,6 +18,8 @@
 
 ### technical terms
 
+<https://noti.st/johtani/6bX2ZY/elastic-stack-for#s9B7fDm>
+
 - index; logical data group like database in RDB
 - replication; to avoid SPOF and improve read performance
 - sharding; split data to multiple hosts, improve write performance and control write flow
