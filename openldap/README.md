@@ -60,6 +60,7 @@ Enter this secret key in mobile's Google Authenticator app.
 3. Submit new LDAP user entry
 
 ```shell-session
+$ docker stack deploy openldap --compose-file docker-compose.yml
 $ docker service update openldap_openldap
 ```
 
@@ -80,6 +81,7 @@ $ rm bastion/google_authenticators/koketani
 3. Update docker services in the stack
 
 ```shell-session
+$ docker stack deploy openldap --compose-file docker-compose.yml
 $ docker service update openldap_openldap
 ```
 
