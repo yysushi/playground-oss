@@ -275,4 +275,14 @@ https://coreos.com/blog/etcd-3-1-announcement.html
 
 シリアライズの意味 https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%AA%E3%82%A2%E3%83%A9%E3%82%A4%E3%82%BA
 
+https://en.wikipedia.org/wiki/Isolation_(database_systems)#Serializable
+
+https://jepsen.io/analyses/etcd-3.4.3
+
+client https://pkg.go.dev/go.etcd.io/etcd?tab=versions
+
 lock https://github.com/etcd-io/etcd/tree/master/Documentation/learning/lock
+
+client design https://etcd.io/docs/v3.4.0/learning/design-client/
+
+godoc https://pkg.go.dev/go.etcd.io/etcd/clientv3
