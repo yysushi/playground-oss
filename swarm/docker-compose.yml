@@ -1,0 +1,10 @@
+---
+
+version: '3.8'
+
+services:
+  ping:
+    build: .
+    image: koketani/ping
+    ports:
+      - '8080:8080'
