@@ -3,9 +3,10 @@ from flask import Flask, request
 app = Flask(__name__)
 
 
-@app.route('/service')
+@app.route('/')
 def hello():
-  return 'Hello ' + request.headers.get('x-current-user') + ' from behind Envoy!'
+  token = request.args.get('token')
+  return f'authorized with {token}'
 
 
 if __name__ == "__main__":

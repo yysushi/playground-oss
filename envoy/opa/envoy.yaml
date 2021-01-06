@@ -14,6 +14,29 @@ static_resources:
           codec_type: auto
           stat_prefix: ingress_http
           http_filters:
+          - name: envoy.filters.http.jwt_authn
+            typed_config:
+              "@type": type.googleapis.com/envoy.config.filter.http.jwt_authn.v2alpha.JwtAuthentication
+              providers:
+                google-jwt-authn:
+                  issuer: https://accounts.google.com
+                  audiences: []
+                  remote_jwks:
+                    # https://accounts.google.com/.well-known/openid-configuration
+                    http_uri:
+                      uri: https://www.googleapis.com/oauth2/v3/certs
+                      cluster: google-api
+                      timeout:
+                        seconds: 5
+                  forward_payload_header: JWT-PAYLOAD
+                  from_headers:
+                  - name: Authorization
+                    value_prefix: "Bearer "
+              rules:
+              - match:
+                  prefix: "/"
+                requires:
+                  provider_name: "google-jwt-authn"
           - name: envoy.filters.http.ext_authz
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
@@ -75,3 +98,18 @@ static_resources:
               socket_address:
                 address: ext_authz-opa-service
                 port_value: 9002
+
+  - name: google-api
+    type: LOGICAL_DNS
+    dns_lookup_family: V4_ONLY
+    connect_timeout: 2s
+    lb_policy: ROUND_ROBIN
+    hosts:
+    - socket_address:
+        address: www.googleapis.com
+        port_value: 443
+    transport_socket:
+      name: envoy.transport_sockets.tls
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.transport_sockets.tls.v3.UpstreamTlsContext
+        sni: www.googleapis.com
