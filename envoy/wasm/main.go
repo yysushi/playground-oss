@@ -16,7 +16,7 @@ type sample struct {
 }
 
 // override
-func (ctx *sample) OnVMStart(vmConfigurationSize int) bool {
+func (ctx *sample) OnHttpResponse(vmConfigurationSize int) bool {
 	proxywasm.LogInfo("ʕ◔ϖ◔ʔ")
 	return true
 }
