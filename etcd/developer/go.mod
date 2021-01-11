@@ -18,9 +18,10 @@ require (
 	github.com/opencontainers/runc v0.1.1 // indirect
 	github.com/ory/dockertest v3.3.5+incompatible
 	github.com/sirupsen/logrus v1.7.0 // indirect
+	github.com/stretchr/testify v1.4.0
 	go.etcd.io/etcd v3.3.25+incompatible
 	go.uber.org/zap v1.16.0 // indirect
-	google.golang.org/grpc v1.33.0 // indirect
+	google.golang.org/grpc v1.33.0
 )
 
 // https://github.com/etcd-io/etcd/issues/12068
