@@ -137,3 +137,18 @@
 - input
 - filter
 - output
+
+## Kibana
+
+https://thinkit.co.jp/article/14083
+
+- discover: view detailed data
+- visualize: make a graph by using data
+- dashboard: collect and view graph
+- timelion: draw multiple graphs by defining function
+- dev tools: test query of elastic search
+- management: configurations
+
+## Examples
+
+https://github.com/elastic/examples
