@@ -29,8 +29,6 @@
 
 - ext authz
 
-- redirect
-
 - tracing
 
 - fault injection
@@ -42,3 +40,5 @@
 - dynamic configuration
 
 https://github.com/envoyproxy/envoy/tree/main/examples
+
+- lua
