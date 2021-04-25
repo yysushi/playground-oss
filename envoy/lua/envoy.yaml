@@ -31,6 +31,7 @@ static_resources:
                   local new_path = request_handle:streamInfo():dynamicMetadata():get("custom")["new-path"]
                   request_handle:logInfo("new path: " .. new_path)
                   request_handle:headers():replace(":path", new_path)
+                  request_handle:headers():replace(":host", "private-service")
                 end
           - name: envoy.filters.http.router
             typed_config: {}
