@@ -14,6 +14,14 @@ static_resources:
           codec_type: auto
           stat_prefix: ingress_http
           http_filters:
+          - name: envoy.filters.http.header_to_metadata
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.header_to_metadata.v3.Config
+              request_rules:
+              - header: x-new-path
+                on_header_present:
+                  metadata_namespace: custom
+                  key: new-path
           - name: envoy.filters.http.router
             typed_config: {}
           route_config:
@@ -26,7 +34,11 @@ static_resources:
               - match:
                   path: "/"
                 redirect:
-                  path_redirect: "/123"
+                  path_redirect: '/%DYNAMIC_METADATA(["custom", "new-path"])%'
+              - match:
+                  path: "/123"
+                route:
+                  cluster: upstream-service
   clusters:
   - name: upstream-service
     connect_timeout: 0.250s
