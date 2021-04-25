@@ -18,7 +18,10 @@ services:
       context: ./upstream
       dockerfile: service/Dockerfile
     networks:
-      - envoymesh
+      envoymesh:
+        aliases:
+          - private-service
+          - upstream-service
 
 networks:
   envoymesh: {}
