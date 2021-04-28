@@ -236,3 +236,14 @@ egress: envoy <- service
 - Service to service only
 - Service to service plus front proxy
 - Service to service, front proxy, and double proxy
+
+## Request flow
+
+https://www.envoyproxy.io/docs/envoy/latest/intro/life_of_a_request#request-flow
+
+```
+6. For each HTTP stream, an HTTP filter chain is created and runs. The request first passes through CustomFilter which may read and modify the request. The most important HTTP filter is the router filter which sits at the end of the HTTP filter chain. When decodeHeaders is invoked on the router filter, the route is selected and a cluster is picked. The request headers on the stream are forwarded to an upstream endpoint in that cluster. The router filter obtains an HTTP connection pool from the cluster manager for the matched cluster to do this.
+10. The request, consisting of headers, and optional body and trailers, is proxied upstream, and the response is proxied downstream. The response passes through the HTTP filters in the opposite order from the request, starting at the router filter and passing through CustomFilter, before being sent downstream.
+```
+
+https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_filters

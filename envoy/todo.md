@@ -42,3 +42,11 @@
 https://github.com/envoyproxy/envoy/tree/main/examples
 
 - lua
+- per route config
+
+https://unicorn.limited/jp/rd/cloud/20200831-envoy-basicauth.html
+https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_authz_filter#per-route-configuration
+
+
+- http filter
+https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_filters
