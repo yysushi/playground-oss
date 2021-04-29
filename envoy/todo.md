@@ -50,3 +50,5 @@ https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_filters/ext_
 
 - http filter
 https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_filters
+
+- capture stream by using tap

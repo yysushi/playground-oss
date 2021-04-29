@@ -247,3 +247,10 @@ https://www.envoyproxy.io/docs/envoy/latest/intro/life_of_a_request#request-flow
 ```
 
 https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/http/http_filters
+
+## Confiugrations
+
+- HCM: https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/http_conn_man#config-http-conn-man
+  - route matching: https://www.envoyproxy.io/docs/envoy/latest/configuration/http/http_conn_man/route_matching#config-http-conn-man-route-table-route-matching
+
+
