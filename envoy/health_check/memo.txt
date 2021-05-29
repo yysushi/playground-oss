@@ -1,0 +1,20 @@
+https://www.envoyproxy.io/docs/envoy/latest/intro/arch_overview/upstream/health_checking#arch-overview-health-checking-filter
+
+docker run --rm -i -t \
+      -v $(pwd)/envoy.yaml:/envoy.yaml \
+      -p 9901:9901 \
+      -p 10000:10000 \
+      --name envoy \
+      envoyproxy/envoy-dev:latest \
+          -c /envoy.yaml
+
+```
+koketani: ~/g/g/k/p/e/tap (main ?)$ curl localhost:10000
+ʕ◔ϖ◔ʔ%
+koketani: ~/g/g/k/p/e/tap (main ?)$ curl -i localhost:10000/healthcheck
+HTTP/1.1 200 OK
+x-envoy-upstream-healthchecked-cluster:
+date: Sat, 29 May 2021 10:18:13 GMT
+server: envoy
+content-length: 0
+```
