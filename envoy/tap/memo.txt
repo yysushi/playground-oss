@@ -1,0 +1,222 @@
+
+```
+docker run --rm -i -t \
+      -v $(pwd)/envoy.yaml:/envoy.yaml \
+      -p 9901:9901 \
+      -p 10000:10000 \
+      --name envoy \
+      envoyproxy/envoy-dev:latest \
+          -c /envoy.yaml \
+          -l trace
+```
+
+
+```
+[2021-05-29 10:28:42.392][1][debug][main] [source/server/server.cc:209] flushing stats
+[2021-05-29 10:28:45.619][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451700 for 3600000ms, min is 3600000ms
+[2021-05-29 10:28:45.619][21][debug][conn_handler] [source/server/active_tcp_listener.cc:328] [C0] new connection
+[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 2
+[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
+[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
+[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
+[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=false
+[2021-05-29 10:28:45.621][21][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 79
+[2021-05-29 10:28:45.621][21][trace][connection] [source/common/network/raw_buffer_socket.cc:38] [C0] read error: Resource temporarily unavailable
+[2021-05-29 10:28:45.621][21][trace][http] [source/common/http/http1/codec_impl.cc:558] [C0] parsing 79 bytes
+[2021-05-29 10:28:45.622][21][trace][http] [source/common/http/http1/codec_impl.cc:837] [C0] message begin
+[2021-05-29 10:28:45.622][21][debug][http] [source/common/http/conn_manager_impl.cc:261] [C0] new stream
+[2021-05-29 10:28:45.622][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
+[2021-05-29 10:28:45.622][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=Host value=localhost:10000
+[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=User-Agent value=curl/7.64.1
+[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:688] [C0] onHeadersCompleteBase
+[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=Accept value=*/*
+[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:1038] [C0] Server: onHeadersComplete size=3
+[2021-05-29 10:28:45.624][21][trace][http] [source/common/http/http1/codec_impl.cc:815] [C0] message complete
+[2021-05-29 10:28:45.624][21][trace][connection] [source/common/network/connection_impl.cc:349] [C0] readDisable: disable=true disable_count=0 state=0 buffer_length=79
+[2021-05-29 10:28:45.624][21][debug][http] [source/common/http/conn_manager_impl.cc:882] [C0][S8760797750370663101] request headers complete (end_stream=true):
+':authority', 'localhost:10000'
+':path', '/'
+':method', 'GET'
+'user-agent', 'curl/7.64.1'
+'accept', '*/*'
+
+[2021-05-29 10:28:45.625][21][debug][http] [source/common/http/filter_manager.cc:779] [C0][S8760797750370663101] request end stream
+[2021-05-29 10:28:45.626][21][trace][http] [source/common/http/filter_manager.cc:517] [C0][S8760797750370663101] decode headers called: filter=0xe28bf44d180 status=0
+[2021-05-29 10:28:45.627][21][debug][http] [source/common/http/filter_manager.cc:883] [C0][S8760797750370663101] Sending local reply with details direct_response
+[2021-05-29 10:28:45.627][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
+[2021-05-29 10:28:45.627][21][trace][http] [source/common/http/filter_manager.cc:1046] [C0][S8760797750370663101] encode headers called: filter=0xe28bf44d1f0 status=0
+[2021-05-29 10:28:45.627][21][debug][http] [source/common/http/conn_manager_impl.cc:1451] [C0][S8760797750370663101] encoding headers via codec (end_stream=false):
+':status', '200'
+'content-length', '12'
+'content-type', 'text/plain'
+'date', 'Sat, 29 May 2021 10:28:45 GMT'
+'server', 'envoy'
+
+[2021-05-29 10:28:45.628][21][trace][connection] [source/common/network/connection_impl.cc:470] [C0] writing 117 bytes, end_stream false
+[2021-05-29 10:28:45.628][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
+[2021-05-29 10:28:45.628][21][trace][http] [source/common/http/filter_manager.cc:1194] [C0][S8760797750370663101] encode data called: filter=0xe28bf44d1f0 status=0
+[2021-05-29 10:28:45.628][21][trace][http] [source/common/http/conn_manager_impl.cc:1460] [C0][S8760797750370663101] encoding data via codec (size=12 end_stream=true)
+[2021-05-29 10:28:45.629][21][trace][connection] [source/common/network/connection_impl.cc:470] [C0] writing 12 bytes, end_stream false
+[2021-05-29 10:28:45.629][21][trace][connection] [source/common/network/connection_impl.cc:349] [C0] readDisable: disable=false disable_count=1 state=0 buffer_length=79
+[2021-05-29 10:28:45.630][21][debug][tap] [source/extensions/filters/http/tap/tap_config_impl.cc:170] submitting buffered trace sink
+[2021-05-29 10:28:45.630][21][debug][misc] [source/extensions/common/tap/tap_config_base.cc:188] Opening tap file for [id=8760797750370663101] to /tmp/_8760797750370663101.json
+[2021-05-29 10:28:45.631][21][trace][misc] [source/extensions/common/tap/tap_config_base.cc:194] Tap for [id=8760797750370663101]: http_buffered_trace {
+  request {
+    headers {
+      key: ":authority"
+      value: "localhost:10000"
+    }
+    headers {
+      key: ":path"
+      value: "/"
+    }
+    headers {
+      key: ":method"
+      value: "GET"
+    }
+    headers {
+      key: ":scheme"
+      value: "http"
+    }
+    headers {
+      key: "user-agent"
+      value: "curl/7.64.1"
+    }
+    headers {
+      key: "accept"
+      value: "*/*"
+    }
+    headers {
+      key: "x-forwarded-proto"
+      value: "http"
+    }
+    headers {
+      key: "x-request-id"
+      value: "49c365e3-f628-4ccd-8b2c-b1ba3c33a053"
+    }
+  }
+  response {
+    headers {
+      key: ":status"
+      value: "200"
+    }
+    headers {
+      key: "content-length"
+      value: "12"
+    }
+    headers {
+      key: "content-type"
+      value: "text/plain"
+    }
+    headers {
+      key: "date"
+      value: "Sat, 29 May 2021 10:28:45 GMT"
+    }
+    headers {
+      key: "server"
+      value: "envoy"
+    }
+    body {
+      as_string: "\312\225\342\227\224\317\226\342\227\224\312\224"
+    }
+  }
+}
+
+[2021-05-29 10:28:45.635][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=1)
+[2021-05-29 10:28:45.635][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451700 for 3600000ms, min is 3600000ms
+[2021-05-29 10:28:45.635][21][trace][http] [source/common/http/filter_manager.cc:517] [C0][S8760797750370663101] decode headers called: filter=0xe28bf44d260 status=1
+[2021-05-29 10:28:45.635][21][trace][http] [source/common/http/http1/codec_impl.cc:607] [C0] parsed 79 bytes
+[2021-05-29 10:28:45.635][21][trace][main] [source/common/event/dispatcher_impl.cc:115] clearing deferred deletion list (size=1)
+[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
+[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
+[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/raw_buffer_socket.cc:67] [C0] write returns: 129
+[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=true
+[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/raw_buffer_socket.cc:38] [C0] read error: Resource temporarily unavailable
+[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
+[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
+[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=false
+[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 0
+[2021-05-29 10:28:45.640][21][debug][connection] [source/common/network/connection_impl.cc:633] [C0] remote close
+[2021-05-29 10:28:45.640][21][debug][connection] [source/common/network/connection_impl.cc:243] [C0] closing socket: 0
+[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:410] [C0] raising connection event 0
+[2021-05-29 10:28:45.640][21][debug][conn_handler] [source/server/active_tcp_listener.cc:76] [C0] adding to cleanup list
+[2021-05-29 10:28:45.640][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=1)
+[2021-05-29 10:28:45.640][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=2)
+[2021-05-29 10:28:45.641][21][trace][main] [source/common/event/dispatcher_impl.cc:115] clearing deferred deletion list (size=2)
+[2021-05-29 10:28:47.393][1][debug][main] [source/server/server.cc:209] flushing stats
+```
+
+```
+koketani: ~/g/g/k/p/e/tap (main ?)$ docker exec -i -t 8421022db91a bash
+root@8421022db91a:/# cat /tmp/_8760797750370663101.json
+{
+ "http_buffered_trace": {
+  "request": {
+   "headers": [
+    {
+     "key": ":authority",
+     "value": "localhost:10000"
+    },
+    {
+     "key": ":path",
+     "value": "/"
+    },
+    {
+     "key": ":method",
+     "value": "GET"
+    },
+    {
+     "key": ":scheme",
+     "value": "http"
+    },
+    {
+     "key": "user-agent",
+     "value": "curl/7.64.1"
+    },
+    {
+     "key": "accept",
+     "value": "*/*"
+    },
+    {
+     "key": "x-forwarded-proto",
+     "value": "http"
+    },
+    {
+     "key": "x-request-id",
+     "value": "49c365e3-f628-4ccd-8b2c-b1ba3c33a053"
+    }
+   ],
+   "trailers": []
+  },
+  "response": {
+   "headers": [
+    {
+     "key": ":status",
+     "value": "200"
+    },
+    {
+     "key": "content-length",
+     "value": "12"
+    },
+    {
+     "key": "content-type",
+     "value": "text/plain"
+    },
+    {
+     "key": "date",
+     "value": "Sat, 29 May 2021 10:28:45 GMT"
+    },
+    {
+     "key": "server",
+     "value": "envoy"
+    }
+   ],
+   "body": {
+    "truncated": false,
+    "as_string": "ʕ◔ϖ◔ʔ"
+   },
+   "trailers": []
+  }
+ }
+}
+```
