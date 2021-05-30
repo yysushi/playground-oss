@@ -23,7 +23,8 @@ static_resources:
                   upgrade_configs:
                   - upgrade_type: websocket
                   cluster: service_ws
-                  max_stream_duration: 3600s
+                  max_stream_duration:
+                    max_stream_duration: 3600s
                   regex_rewrite:
                     pattern:
                       google_re2: {}
