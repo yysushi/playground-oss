@@ -20,9 +20,14 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: "/"
+                  path: "/upgrade"
                 route:
                   cluster: service_ws
+                  regex_rewrite:
+                    pattern:
+                      google_re2: {}
+                      regex: "^/upgrade$"
+                    substitution: "/"
           http_filters:
           - name: envoy.filters.http.router
 
@@ -39,4 +44,4 @@ static_resources:
             address:
               socket_address:
                 address: service-ws
-                port_value: 80
+                port_value: 8080

@@ -1,4 +1,6 @@
-version: "3.7"
+---
+
+version: "3.8"
 services:
 
   proxy-ws:
@@ -9,6 +11,22 @@ services:
       - "10000:10000"
 
   service-ws:
-    image: solsson/websocat
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    image: ws-test
     hostname: service-ws
-    command: -E ws-listen:0.0.0.0:80 literalreply:'[ws] HELO'
+    command: node server.js
+    depends_on:
+      - proxy-ws
+
+  client-ws:
+    build:
+      context: ./service
+      dockerfile: Dockerfile-client-ws
+    image: ws-test-client
+    hostname: client-ws
+    command: node client.js
+    depends_on:
+      - proxy-ws
+      - service-ws
