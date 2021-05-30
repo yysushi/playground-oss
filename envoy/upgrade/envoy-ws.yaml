@@ -23,6 +23,7 @@ static_resources:
                   upgrade_configs:
                   - upgrade_type: websocket
                   cluster: service_ws
+                  timeout: 0s
                   regex_rewrite:
                     pattern:
                       google_re2: {}
