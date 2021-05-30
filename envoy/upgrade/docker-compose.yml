@@ -1,0 +1,14 @@
+version: "3.7"
+services:
+
+  proxy-ws:
+    build:
+      context: .
+      dockerfile: Dockerfile-proxy-ws
+    ports:
+      - "10000:10000"
+
+  service-ws:
+    image: solsson/websocat
+    hostname: service-ws
+    command: -E ws-listen:0.0.0.0:80 literalreply:'[ws] HELO'
