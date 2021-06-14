@@ -8,16 +8,15 @@
 
 ## Step
 
-```
-docker run --rm -i -t \
-      -v $(pwd)/envoy.yaml:/envoy.yaml \
-      -p 8000:8000 \
-      --name envoy \
-      envoyproxy/envoy-dev:latest \
-          -l debug \
-          -c /envoy.yaml
+```shell-session
+$ mkfile 100m image.bin
 ```
 
+```shell-session
+$ docker-compose up
 ```
-$ go get github.com/rakyll/hey
+
+```shell-session
+$ docker build -t bandwidth/hey github.com/rakyll/hey
+$ docker run --net bandwidth_default -v $(pwd)/image.bin:image.bin --rm bandwidth/hey -m PUT -D image.bin -t 0 -n 3 -c 3 http://envoy:10000/prefix
 ```

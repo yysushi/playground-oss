@@ -12,13 +12,8 @@ services:
       - ./server.go:/go/src/server/server.go
     command: ["go", "run", "server.go"]
 
-  hey:
-    container_name: hey
-    image: bandwidth/hey
-    build:
-      context: github.com/rakyll/hey
+  envoy:
+    image: envoyproxy/envoy-dev:latest
     volumes:
-      - ./image.bin:/tmp/image.bin
-    command: ["-m", "PUT", "-D", "/tmp/image.bin", "-t", "0", "-n", "3", "-c", "3", "http://server:8080/"]
-    depends_on:
-      - server
+      - ./envoy.yaml:/etc/envoy.yaml
+    command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
