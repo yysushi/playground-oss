@@ -1,0 +1,32 @@
+---
+
+version: "3.8"
+services:
+
+  proxy-ws:
+    build:
+      context: .
+      dockerfile: Dockerfile-proxy-ws
+    ports:
+      - "10000:10000"
+
+  service-ws:
+    build:
+      context: ./service
+      dockerfile: Dockerfile
+    image: ws-test
+    hostname: service-ws
+    command: node server.js
+    depends_on:
+      - proxy-ws
+
+  client-ws:
+    build:
+      context: ./service
+      dockerfile: Dockerfile-client-ws
+    image: ws-test-client
+    hostname: client-ws
+    command: node client.js
+    depends_on:
+      - proxy-ws
+      - service-ws

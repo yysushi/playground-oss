@@ -1,0 +1,20 @@
+---
+
+version: "3.8"
+
+services:
+
+  server:
+    container_name: server
+    image: golang:1.16.5
+    working_dir: /go/src/server
+    volumes:
+      - ./server.go:/go/src/server/server.go
+    command: ["go", "run", "server.go"]
+
+  envoy:
+    image: envoyproxy/envoy-dev:latest
+    volumes:
+      - ./envoy.yaml:/etc/envoy.yaml
+    # command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
+    command: ["-c", "/etc/envoy.yaml"]
