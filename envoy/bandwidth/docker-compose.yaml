@@ -16,4 +16,5 @@ services:
     image: envoyproxy/envoy-dev:latest
     volumes:
       - ./envoy.yaml:/etc/envoy.yaml
-    command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
+    # command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
+    command: ["-c", "/etc/envoy.yaml"]

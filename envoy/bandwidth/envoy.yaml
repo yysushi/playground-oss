@@ -16,6 +16,20 @@ static_resources:
               socket_address:
                 address: server
                 port_value: 8080
+  - name: unprotected-service
+    type: LOGICAL_DNS
+    connect_timeout: 10s
+    lb_policy: ROUND_ROBIN
+    dns_lookup_family: V4_ONLY
+    load_assignment:
+      cluster_name: unprotected-service
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: server
+                port_value: 8080
   listeners:
   - address:
       socket_address:
@@ -35,9 +49,25 @@ static_resources:
               - "*"
               routes:
               - match:
-                  prefix: /prefix
+                  prefix: /protected
                 route:
                   cluster: protected-service
                   prefix_rewrite: /
+                typed_per_filter_config:
+                  envoy.filters.http.bandwidth_limit:
+                    "@type": type.googleapis.com/envoy.extensions.filters.http.bandwidth_limit.v3alpha.BandwidthLimit
+                    stat_prefix: bandwidth_limiter_custom_route
+                    enable_mode: REQUEST
+                    limit_kbps: 60000
+                    fill_interval: 0.1s
+              - match:
+                  prefix: /unprotected
+                route:
+                  cluster: unprotected-service
+                  prefix_rewrite: /
           http_filters:
+          - name: envoy.filters.http.bandwidth_limit
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.bandwidth_limit.v3alpha.BandwidthLimit
+              stat_prefix: bandwidth_limiter_default
           - name: envoy.filters.http.router
