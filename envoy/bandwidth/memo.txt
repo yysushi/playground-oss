@@ -1,0 +1,1 @@
+mkfile 1m image.bin
