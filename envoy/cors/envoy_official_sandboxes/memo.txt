@@ -1,0 +1,120 @@
+- preflight request with curl
+
+<https://stackoverflow.com/questions/12173990/how-can-you-debug-a-cors-request-with-curl>
+
+```
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !)$ curl -i -XOPTIONS localhost:8002/cors/open
+
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+allow: GET, OPTIONS, HEAD
+content-length: 0
+server: envoy
+date: Wed, 14 Jul 2021 22:56:16 GMT
+x-envoy-upstream-service-time: 2
+
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !)$ curl -i -XOPTIONS localhost:8002/cors/open -H 'Origin: http://localhost:8000'
+
+HTTP/1.1 200 OK
+content-type: text/html; charset=utf-8
+allow: GET, OPTIONS, HEAD
+content-length: 0
+server: envoy
+date: Wed, 14 Jul 2021 22:56:18 GMT
+x-envoy-upstream-service-time: 1
+access-control-allow-origin: http://localhost:8000
+
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !)$ curl -i -XOPTIONS localhost:8002/cors/open -H 'Access-Control-Request-Method: GET' -H 'Origin: http://localhost:8000'
+
+HTTP/1.1 200 OK
+access-control-allow-origin: http://localhost:8000
+access-control-allow-methods: GET
+date: Wed, 14 Jul 2021 22:56:24 GMT
+server: envoy
+content-length: 0
+```
+
+```
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !?)$ curl -v localhost:8002/cors/open -H 'Origin: anything'
+*   Trying 127.0.0.1:8002...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8002 (#0)
+> GET /cors/open HTTP/1.1
+> Host: localhost:8002
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Origin: anything
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-type: text/html; charset=utf-8
+< content-length: 8
+< server: envoy
+< date: Wed, 14 Jul 2021 23:26:44 GMT
+< x-envoy-upstream-service-time: 1
+< access-control-allow-origin: anything
+<
+* Connection #0 to host localhost left intact
+Success!%
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !?)$ curl -v localhost:8002/cors/restricted -H 'Origin: anything'
+*   Trying 127.0.0.1:8002...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8002 (#0)
+> GET /cors/restricted HTTP/1.1
+> Host: localhost:8002
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Origin: anything
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-type: text/html; charset=utf-8
+< content-length: 8
+< server: envoy
+< date: Wed, 14 Jul 2021 23:26:47 GMT
+< x-envoy-upstream-service-time: 1
+<
+* Connection #0 to host localhost left intact
+Success!%
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !?)$ curl -v localhost:8002/cors/restricted -H 'Origin: http://localhost:8000'
+*   Trying 127.0.0.1:8002...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8002 (#0)
+> GET /cors/restricted HTTP/1.1
+> Host: localhost:8002
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Origin: http://localhost:8000
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-type: text/html; charset=utf-8
+< content-length: 8
+< server: envoy
+< date: Wed, 14 Jul 2021 23:26:53 GMT
+< x-envoy-upstream-service-time: 1
+< access-control-allow-origin: http://localhost:8000
+<
+* Connection #0 to host localhost left intact
+Success!%
+koketani: ~/g/g/k/p/e/c/envoy_official_sandboxes (envoy !?)$ curl -v localhost:8002/cors/disabled -H 'Origin: http://localhost:8000'
+*   Trying 127.0.0.1:8002...
+* TCP_NODELAY set
+* Connected to localhost (127.0.0.1) port 8002 (#0)
+> GET /cors/disabled HTTP/1.1
+> Host: localhost:8002
+> User-Agent: curl/7.68.0
+> Accept: */*
+> Origin: http://localhost:8000
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-type: text/html; charset=utf-8
+< content-length: 8
+< server: envoy
+< date: Wed, 14 Jul 2021 23:27:02 GMT
+< x-envoy-upstream-service-time: 1
+<
+* Connection #0 to host localhost left intact
+Success!%
+```

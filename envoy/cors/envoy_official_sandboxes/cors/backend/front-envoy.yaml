@@ -27,16 +27,6 @@ static_resources:
                     google_re2: {}
                     regex: \*
                 allow_methods: "GET"
-                filter_enabled:
-                  default_value:
-                    numerator: 100
-                    denominator: HUNDRED
-                  runtime_key: cors.www.enabled
-                shadow_enabled:
-                  default_value:
-                    numerator: 0
-                    denominator: HUNDRED
-                  runtime_key: cors.www.shadow_enabled
               routes:
               - match:
                   prefix: "/cors/open"
@@ -57,9 +47,7 @@ static_resources:
                   cluster: backend_service
                   cors:
                     allow_origin_string_match:
-                    - safe_regex:
-                        google_re2: {}
-                        regex: .*\.envoyproxy\.io
+                    - exact: "http://localhost:8000"
                     allow_methods: "GET"
               - match:
                   prefix: "/"
