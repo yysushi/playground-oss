@@ -1,0 +1,5 @@
+node server.js
+python -m http.server
+docker run --rm --name envoy -p 8080:8080 -v $(pwd):/sample envoyproxy/envoy-dev -c /sample/envoy.yaml
+
+<http://localhost:8000>

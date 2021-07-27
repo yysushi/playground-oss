@@ -3,9 +3,45 @@
 <html>
   <head>
     <title>sample</title>
+    <script type="text/javascript">
+      var client = new XMLHttpRequest();
+      var resultText;
+
+      function send() {
+        var type = document.querySelector('input[name="type"]:checked').value;
+        if (type === "direct") {
+          var url = "http://localhost:3000/hello";
+        } else {
+          var url = "http://localhost:8080/hello";
+        }
+        client.open("GET", url, true);
+        client.onreadystatechange = handler;
+        client.send();
+      }
+      function handler() {
+        var responseHeaders = client.getAllResponseHeaders();
+        if (responseHeaders === "") {
+          document.getElementById("results").textContent = "CORS Error";
+        }
+        if (client.readyState == 4 && client.status == 200) {
+          resultText = client.responseText;
+          document.getElementById("results").textContent = resultText;
+        }
+      }
+    </script>
   </head>
 
   <body>
-    <script src="client.js"></script>
+    <p>
+      <input type="radio" name="type" value="direct" checked="checked" /> direct
+      <br />
+      <input type="radio" name="type" value="envoy" /> envoy
+      <br />
+    </p>
+    <button id="submit" onclick="send()">send</button> <br />
+    <div style="float: left">
+      <p>results:</p>
+      <p id="results"></p>
+    </div>
   </body>
 </html>
