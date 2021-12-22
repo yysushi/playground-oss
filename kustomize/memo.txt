@@ -1,0 +1,16 @@
+https://github.com/kubernetes-sigs/kustomize/tree/master/examples/helloWorld
+
+base and overlay
+
+in base, kustomization and resource (configMap, service, etc)
+
+in overlay, kustomization and patch
+
+- base and overlay are directoies.
+- base has two types of files. they are kustomization and resource.
+- one kustomization file conists of N resources.
+- overlay indicates N environments.
+- overlay kustomization is based on base's kustomization (resources section). it allows some patches.
+
+- base draws common environment k8s manifests. the kustomization has N resources as `resources` section.
+- base draws common environment k8s manifests.
