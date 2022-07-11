@@ -1,0 +1,27 @@
+
+- how to run
+
+https://hub.docker.com/_/nextcloud
+
+docker run -d -p 8080:80 nextcloud
+
+- description
+
+files, photos features should be enough. (minimum install can be specified when installed.)
+they allow us to tag files/photos. but, no retrieval with tag...?
+
+map feature is useful.
+
+- data
+
+root@f9caad4a2753:/var/www/html# ls data/owncloud.db
+data/owncloud.db
+
+root@f9caad4a2753:/var/www/html# ls data/admin/files/Photos/
+ Birdie.jpg   Frog.jpg   Gorilla.jpg   IMG_20220706_094041697_HDR.jpg   IMG_20220708_121645798.jpg   Library.jpg  'Nextcloud community.jpg'   Readme.md   Steps.jpg   Toucan.jpg   Vineyard.jpg
+
+ - automation
+
+https://github.com/luffah/nextcloud-API
+
+yysushi: ~/g/g/y/p/nextcloud (main ?)$ NEXTCLOUD_HOSTNAME=localhost NEXTCLOUD_ADMIN_USER=admin NEXTCLOUD_ADMIN_PASSWORD=admin python sample.py
