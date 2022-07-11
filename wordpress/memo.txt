@@ -1,3 +1,4 @@
+https://hub.docker.com/_/wordpress
 
 - how to run (only wordpress)
 docker run --name some-wordpress --rm -p 8080:80 wordpress
