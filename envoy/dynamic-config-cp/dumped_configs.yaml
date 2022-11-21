@@ -9,11 +9,11 @@
           major_number: 1
           minor_number: 25
         metadata:
-          revision.status: Clean
           build.type: RELEASE
+          revision.status: Clean
+          build.label: dev
           ssl.version: BoringSSL
           revision.sha: 04dd76b051c99f82abda081e1d04cac38667ef88
-          build.label: dev
       extensions:
         - name: envoy.access_loggers.extension_filters.cel
           category: envoy.access_loggers.extension_filters
@@ -1003,6 +1003,7 @@
           port_value: 19000
   last_updated: "2022-11-21T01:43:59.370Z"
 - '@type': type.googleapis.com/envoy.admin.v3.ClustersConfigDump
+  version_info: "1"
   static_clusters:
     - cluster:
         '@type': type.googleapis.com/envoy.config.cluster.v3.Cluster
@@ -1023,5 +1024,74 @@
             explicit_http_config:
               http2_protocol_options: {}
       last_updated: "2022-11-21T01:43:59.379Z"
+  dynamic_active_clusters:
+    - version_info: "1"
+      cluster:
+        '@type': type.googleapis.com/envoy.config.cluster.v3.Cluster
+        name: example_proxy_cluster
+        type: LOGICAL_DNS
+        connect_timeout: 5s
+        dns_lookup_family: V4_ONLY
+        load_assignment:
+          cluster_name: example_proxy_cluster
+          endpoints:
+            - lb_endpoints:
+                - endpoint:
+                    address:
+                      socket_address:
+                        address: service1
+                        port_value: 8080
+      last_updated: "2022-11-21T01:46:23.797Z"
 - '@type': type.googleapis.com/envoy.admin.v3.ListenersConfigDump
+  version_info: "1"
+  dynamic_listeners:
+    - name: listener_0
+      active_state:
+        version_info: "1"
+        listener:
+          '@type': type.googleapis.com/envoy.config.listener.v3.Listener
+          name: listener_0
+          address:
+            socket_address:
+              address: 0.0.0.0
+              port_value: 10000
+          filter_chains:
+            - filters:
+                - name: envoy.filters.network.http_connection_manager
+                  typed_config:
+                    '@type': type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+                    stat_prefix: http
+                    rds:
+                      config_source:
+                        api_config_source:
+                          api_type: GRPC
+                          grpc_services:
+                            - envoy_grpc:
+                                cluster_name: xds_cluster
+                          set_node_on_first_message_only: true
+                          transport_api_version: V3
+                        resource_api_version: V3
+                      route_config_name: local_route
+                    http_filters:
+                      - name: envoy.filters.http.router
+                        typed_config:
+                          '@type': type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+        last_updated: "2022-11-21T01:46:23.806Z"
+- '@type': type.googleapis.com/envoy.admin.v3.ScopedRoutesConfigDump
+- '@type': type.googleapis.com/envoy.admin.v3.RoutesConfigDump
+  dynamic_route_configs:
+    - version_info: "1"
+      route_config:
+        '@type': type.googleapis.com/envoy.config.route.v3.RouteConfiguration
+        name: local_route
+        virtual_hosts:
+          - name: local_service
+            domains:
+              - '*'
+            routes:
+              - match:
+                  prefix: /
+                route:
+                  cluster: example_proxy_cluster
+      last_updated: "2022-11-21T01:46:23.816Z"
 - '@type': type.googleapis.com/envoy.admin.v3.SecretsConfigDump
