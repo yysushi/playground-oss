@@ -1,0 +1,73 @@
+
+
+
+- test env
+
+docker run -it nixos/nix
+
+bash-5.1# nix-env -q
+bash-interactive-5.1-p16
+coreutils-full-9.0
+curl-7.83.1
+findutils-4.9.0
+git-2.36.0
+gnugrep-3.7
+gnutar-1.34
+gzip-1.12
+iana-etc-20211124
+less-600
+man-db-2.10.2
+nix-2.11.0
+nss-cacert-3.80
+openssh-9.0p1
+wget-1.21.3
+which-2.21
+
+- commands
+
+  - List all installed packages:
+    nix-env -q
+
+  - Query installed packages:
+    nix-env -q search_term
+
+  - Query available packages:
+    nix-env -qa search_term
+
+  - Install package:
+    nix-env -iA nixpkgs.pkg_name
+
+  - Install a package from a URL:
+    nix-env -i pkg_name --file example.com
+
+  - Uninstall package:
+    nix-env -e pkg_name
+
+  - Upgrade one package:
+    nix-env -u pkg_name
+
+  - Upgrade all packages:
+    nix-env -u
+
+- home-manager installations
+  - as standalone tool for any platform rather than NixOS or MacOS
+  - as a module within a NixOS system configuration
+  - as a module within a nix-darwin system configuration
+
+- install as a module within a NixOS system configuration
+
+- install as standalone tool
+
+```
+nix-channel --add https://github.com/nix-community/home-manager/archive/master.tar.gz home-manager
+nix-channel --update
+
+export NIX_PATH=$HOME/.nix-defexpr/channels:/nix/var/nix/profiles/per-user/root/channels${NIX_PATH:+:$NIX_PATH}
+nix-shell '<home-manager>' -A install
+
+append
+. "$HOME/.nix-profile/etc/profile.d/hm-session-vars.sh"
+to ~/.profile
+```
+
+- 

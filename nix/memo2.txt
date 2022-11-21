@@ -1,0 +1,18 @@
+
+- test env (ubuntu)
+
+docker run -it ubuntu:22.04
+
+apt update
+apt install curl xz-utils -y
+
+mkdir -m 0755 /nix && chown root /nix
+
+curl -L https://nixos.org/nix/install | sh
+
+---
+
+apt update
+apt install curl xz-utils -y
+mkdir -m 0755 /nix && chown root /nix
+sh <(curl -L https://nixos.org/nix/install) --no-daemon

@@ -1,0 +1,10 @@
+
+- installation on macos
+
+nix: multi-user installation
+
+https://nixos.org/download.html#nix-install-macos
+
+home manager: standalone installation
+
+https://nix-community.github.io/home-manager/index.html#sec-install-standalone
