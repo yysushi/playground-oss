@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+
+  proxy:
+    build:
+      context: .
+      dockerfile: proxy.Dockerfile
+    depends_on:
+    - service1
+    - service2
+    ports:
+    - 10000:10000
+    - 19000:19000
+
+  service1:
+    image: jmalloc/echo-server@sha256:e43a10c9ecbd025df7ed6dac1e45551ce7bd676142600b0734fe7dcd10a47abe
+    hostname: service1
+
+  service2:
+    image: jmalloc/echo-server@sha256:e43a10c9ecbd025df7ed6dac1e45551ce7bd676142600b0734fe7dcd10a47abe
+    hostname: service2
+
+  # go-control-plane:
+  #   build:
+  #     context: .
+  #     dockerfile: cp.Dockerfile
+  #   command: bin/example
+  #   healthcheck:
+  #     test: nc -zv localhost 18000

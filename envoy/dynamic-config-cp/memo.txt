@@ -1,0 +1,56 @@
+- step1
+
+```
+$ curl localhost:10000
+curl: (52) Empty reply from server
+
+$ curl localhost:19000/config_dump | jq '.configs' | yq -P > dumped_configs.yaml
+
+$ curl localhost:19000/config_dump | jq '.configs[1].dynamic_active_clusters'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 54058    0 54058    0     0  2262k      0 --:--:-- --:--:-- --:--:-- 3519k
+null
+
+$ curl localhost:19000/config_dump | jq '.configs[1].static_clusters'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 54058    0 54058    0     0  2217k      0 --:--:-- --:--:-- --:--:-- 3299k
+[
+  {
+    "cluster": {
+      "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
+      "name": "xds_cluster",
+      "type": "STRICT_DNS",
+      "load_assignment": {
+        "cluster_name": "xds_cluster",
+        "endpoints": [
+          {
+            "lb_endpoints": [
+              {
+                "endpoint": {
+                  "address": {
+                    "socket_address": {
+                      "address": "go-control-plane",
+                      "port_value": 18000
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "typed_extension_protocol_options": {
+        "envoy.extensions.upstreams.http.v3.HttpProtocolOptions": {
+          "@type": "type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions",
+          "explicit_http_config": {
+            "http2_protocol_options": {}
+          }
+        }
+      }
+    },
+    "last_updated": "2022-11-21T01:14:35.187Z"
+  }
+]
+```
