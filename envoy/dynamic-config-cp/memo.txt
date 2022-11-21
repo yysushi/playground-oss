@@ -180,3 +180,62 @@ X-Envoy-Expected-Rq-Timeout-Ms: 15000
 X-Forwarded-Proto: http
 X-Request-Id: 342f1fb5-6b74-45d4-979e-b0fa46e519ba
 ```
+
+- step4
+
+```
+$ docker up --build -d dynamic-config-cp_go-control-plane_1
+
+$ curl localhost:10000
+Request served by service2
+
+HTTP/1.1 GET /
+
+Host: localhost:10000
+Accept: */*
+User-Agent: curl/7.84.0
+X-Envoy-Expected-Rq-Timeout-Ms: 15000
+X-Forwarded-Proto: http
+X-Request-Id: 1a0921d8-eac6-4604-9235-09132298686a
+
+$ curl localhost:19000/config_dump | jq '.configs' | yq -P > dumped_configs.yaml
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 57227    0 57227    0     0  2595k      0 --:--:-- --:--:-- --:--:-- 3991k
+$ curl localhost:19000/config_dump | jq '.configs[1].dynamic_active_clusters'
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 57227    0 57227    0     0  2819k      0 --:--:-- --:--:-- --:--:-- 5080k
+[
+  {
+    "version_info": "2",
+    "cluster": {
+      "@type": "type.googleapis.com/envoy.config.cluster.v3.Cluster",
+      "name": "example_proxy_cluster",
+      "type": "LOGICAL_DNS",
+      "connect_timeout": "5s",
+      "dns_lookup_family": "V4_ONLY",
+      "load_assignment": {
+        "cluster_name": "example_proxy_cluster",
+        "endpoints": [
+          {
+            "lb_endpoints": [
+              {
+                "endpoint": {
+                  "address": {
+                    "socket_address": {
+                      "address": "service2",
+                      "port_value": 8080
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "last_updated": "2022-11-21T01:55:30.831Z"
+  }
+]
+```
