@@ -12,55 +12,207 @@ docker run --rm -i -t \
 
 
 ```
-[2021-05-29 10:28:42.392][1][debug][main] [source/server/server.cc:209] flushing stats
-[2021-05-29 10:28:45.619][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451700 for 3600000ms, min is 3600000ms
-[2021-05-29 10:28:45.619][21][debug][conn_handler] [source/server/active_tcp_listener.cc:328] [C0] new connection
-[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 2
-[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
-[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
-[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
-[2021-05-29 10:28:45.620][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=false
-[2021-05-29 10:28:45.621][21][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 79
-[2021-05-29 10:28:45.621][21][trace][connection] [source/common/network/raw_buffer_socket.cc:38] [C0] read error: Resource temporarily unavailable
-[2021-05-29 10:28:45.621][21][trace][http] [source/common/http/http1/codec_impl.cc:558] [C0] parsing 79 bytes
-[2021-05-29 10:28:45.622][21][trace][http] [source/common/http/http1/codec_impl.cc:837] [C0] message begin
-[2021-05-29 10:28:45.622][21][debug][http] [source/common/http/conn_manager_impl.cc:261] [C0] new stream
-[2021-05-29 10:28:45.622][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
-[2021-05-29 10:28:45.622][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=Host value=localhost:10000
-[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=User-Agent value=curl/7.64.1
-[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:688] [C0] onHeadersCompleteBase
-[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:478] [C0] completed header: key=Accept value=*/*
-[2021-05-29 10:28:45.623][21][trace][http] [source/common/http/http1/codec_impl.cc:1038] [C0] Server: onHeadersComplete size=3
-[2021-05-29 10:28:45.624][21][trace][http] [source/common/http/http1/codec_impl.cc:815] [C0] message complete
-[2021-05-29 10:28:45.624][21][trace][connection] [source/common/network/connection_impl.cc:349] [C0] readDisable: disable=true disable_count=0 state=0 buffer_length=79
-[2021-05-29 10:28:45.624][21][debug][http] [source/common/http/conn_manager_impl.cc:882] [C0][S8760797750370663101] request headers complete (end_stream=true):
+[2022-11-25 02:34:36.714][1][info][main] [source/server/server.cc:406] initializing epoch 0 (base id=0, hot restart version=11.104)
+[2022-11-25 02:34:36.714][1][info][main] [source/server/server.cc:408] statically linked extensions:
+[2022-11-25 02:34:36.714][1][info][main] [source/server/server.cc:410]   envoy.matching.http.input: envoy.matching.inputs.destination_ip, envoy.matching.inputs.destination_port, envoy.matching.inputs.direct_source_ip, envoy.matching.inputs.dns_san, envoy.matching.inputs.request_headers, envoy.matching.inputs.request_trailers, envoy.matching.inputs.response_headers, envoy.matching.inputs.response_trailers, envoy.matching.inputs.server_name, envoy.matching.inputs.source_ip, envoy.matching.inputs.source_port, envoy.matching.inputs.source_type, envoy.matching.inputs.subject, envoy.matching.inputs.uri_san
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.udp_packet_writer: envoy.udp_packet_writer.default, envoy.udp_packet_writer.gso
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.rbac.matchers: envoy.rbac.matchers.upstream_ip_port
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.internal_redirect_predicates: envoy.internal_redirect_predicates.allow_listed_routes, envoy.internal_redirect_predicates.previous_routes, envoy.internal_redirect_predicates.safe_cross_scheme
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.http.header_validators: envoy.http.header_validators.envoy_default
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.bootstrap: envoy.bootstrap.internal_listener, envoy.bootstrap.wasm, envoy.extensions.network.socket_interface.default_socket_interface
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.retry_host_predicates: envoy.retry_host_predicates.omit_canary_hosts, envoy.retry_host_predicates.omit_host_metadata, envoy.retry_host_predicates.previous_hosts
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.guarddog_actions: envoy.watchdog.abort_action, envoy.watchdog.profile_action
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.retry_priorities: envoy.retry_priorities.previous_priorities
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.matching.network.input: envoy.matching.inputs.application_protocol, envoy.matching.inputs.destination_ip, envoy.matching.inputs.destination_port, envoy.matching.inputs.direct_source_ip, envoy.matching.inputs.dns_san, envoy.matching.inputs.server_name, envoy.matching.inputs.source_ip, envoy.matching.inputs.source_port, envoy.matching.inputs.source_type, envoy.matching.inputs.subject, envoy.matching.inputs.transport_protocol, envoy.matching.inputs.uri_san
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.thrift_proxy.filters: envoy.filters.thrift.header_to_metadata, envoy.filters.thrift.payload_to_metadata, envoy.filters.thrift.rate_limit, envoy.filters.thrift.router
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.route.early_data_policy: envoy.route.early_data_policy.default
+[2022-11-25 02:34:36.715][1][info][main] [source/server/server.cc:410]   envoy.config.validators: envoy.config.validators.minimum_clusters, envoy.config.validators.minimum_clusters_validator
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.wasm.runtime: envoy.wasm.runtime.null, envoy.wasm.runtime.v8
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.quic.connection_id_generator: envoy.quic.deterministic_connection_id_generator
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.grpc_credentials: envoy.grpc_credentials.aws_iam, envoy.grpc_credentials.default, envoy.grpc_credentials.file_based_metadata
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.matching.http.custom_matchers: envoy.matching.custom_matchers.trie_matcher
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.compression.decompressor: envoy.compression.brotli.decompressor, envoy.compression.gzip.decompressor, envoy.compression.zstd.decompressor
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.http.stateful_session: envoy.http.stateful_session.cookie, envoy.http.stateful_session.header
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.upstreams: envoy.filters.connection_pools.tcp.generic
+[2022-11-25 02:34:36.716][1][info][main] [source/server/server.cc:410]   envoy.matching.input_matchers: envoy.matching.matchers.consistent_hashing, envoy.matching.matchers.ip
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.filters.network: envoy.echo, envoy.ext_authz, envoy.filters.network.connection_limit, envoy.filters.network.direct_response, envoy.filters.network.dubbo_proxy, envoy.filters.network.echo, envoy.filters.network.ext_authz, envoy.filters.network.http_connection_manager, envoy.filters.network.local_ratelimit, envoy.filters.network.mongo_proxy, envoy.filters.network.ratelimit, envoy.filters.network.rbac, envoy.filters.network.redis_proxy, envoy.filters.network.sni_cluster, envoy.filters.network.sni_dynamic_forward_proxy, envoy.filters.network.tcp_proxy, envoy.filters.network.thrift_proxy, envoy.filters.network.wasm, envoy.filters.network.zookeeper_proxy, envoy.http_connection_manager, envoy.mongo_proxy, envoy.ratelimit, envoy.redis_proxy, envoy.tcp_proxy
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.health_checkers: envoy.health_checkers.redis, envoy.health_checkers.thrift
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.resource_monitors: envoy.resource_monitors.fixed_heap, envoy.resource_monitors.injected_resource
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.access_loggers.extension_filters: envoy.access_loggers.extension_filters.cel
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.upstream_options: envoy.extensions.upstreams.http.v3.HttpProtocolOptions, envoy.upstreams.http.http_protocol_options
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.quic.server.crypto_stream: envoy.quic.crypto_stream.server.quiche
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.tracers: envoy.dynamic.ot, envoy.tracers.datadog, envoy.tracers.dynamic_ot, envoy.tracers.opencensus, envoy.tracers.opentelemetry, envoy.tracers.skywalking, envoy.tracers.xray, envoy.tracers.zipkin, envoy.zipkin
+[2022-11-25 02:34:36.717][1][info][main] [source/server/server.cc:410]   envoy.dubbo_proxy.serializers: dubbo.hessian2
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.matching.action: envoy.matching.actions.format_string, filter-chain-name
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.http.cache: envoy.extensions.http.cache.simple
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.formatter: envoy.formatter.metadata, envoy.formatter.req_without_query
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.compression.compressor: envoy.compression.brotli.compressor, envoy.compression.gzip.compressor, envoy.compression.zstd.compressor
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.stats_sinks: envoy.dog_statsd, envoy.graphite_statsd, envoy.metrics_service, envoy.stat_sinks.dog_statsd, envoy.stat_sinks.graphite_statsd, envoy.stat_sinks.hystrix, envoy.stat_sinks.metrics_service, envoy.stat_sinks.statsd, envoy.stat_sinks.wasm, envoy.statsd
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.rate_limit_descriptors: envoy.rate_limit_descriptors.expr
+[2022-11-25 02:34:36.718][1][info][main] [source/server/server.cc:410]   envoy.path.match: envoy.path.match.uri_template.uri_template_matcher
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.common.key_value: envoy.key_value.file_based
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.regex_engines: envoy.regex_engines.google_re2
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.matching.common_inputs: envoy.matching.common_inputs.environment_variable
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.filters.udp_listener: envoy.filters.udp.dns_filter, envoy.filters.udp_listener.udp_proxy
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.thrift_proxy.protocols: auto, binary, binary/non-strict, compact, twitter
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.http.stateful_header_formatters: envoy.http.stateful_header_formatters.preserve_case, preserve_case
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.path.rewrite: envoy.path.rewrite.uri_template.uri_template_rewriter
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.quic.proof_source: envoy.quic.proof_source.filter_chain
+[2022-11-25 02:34:36.719][1][info][main] [source/server/server.cc:410]   envoy.request_id: envoy.request_id.uuid
+[2022-11-25 02:34:36.720][1][info][main] [source/server/server.cc:410]   envoy.access_loggers: envoy.access_loggers.file, envoy.access_loggers.http_grpc, envoy.access_loggers.open_telemetry, envoy.access_loggers.stderr, envoy.access_loggers.stdout, envoy.access_loggers.tcp_grpc, envoy.access_loggers.wasm, envoy.file_access_log, envoy.http_grpc_access_log, envoy.open_telemetry_access_log, envoy.stderr_access_log, envoy.stdout_access_log, envoy.tcp_grpc_access_log, envoy.wasm_access_log
+[2022-11-25 02:34:36.720][1][info][main] [source/server/server.cc:410]   envoy.dubbo_proxy.filters: envoy.filters.dubbo.router
+[2022-11-25 02:34:36.720][1][info][main] [source/server/server.cc:410]   envoy.resolvers: envoy.ip
+[2022-11-25 02:34:36.720][1][info][main] [source/server/server.cc:410]   envoy.dubbo_proxy.protocols: dubbo
+[2022-11-25 02:34:36.720][1][info][main] [source/server/server.cc:410]   envoy.clusters: envoy.cluster.eds, envoy.cluster.logical_dns, envoy.cluster.original_dst, envoy.cluster.static, envoy.cluster.strict_dns, envoy.clusters.aggregate, envoy.clusters.dynamic_forward_proxy, envoy.clusters.redis
+[2022-11-25 02:34:36.721][1][info][main] [source/server/server.cc:410]   envoy.filters.listener: envoy.filters.listener.http_inspector, envoy.filters.listener.original_dst, envoy.filters.listener.original_src, envoy.filters.listener.proxy_protocol, envoy.filters.listener.tls_inspector, envoy.listener.http_inspector, envoy.listener.original_dst, envoy.listener.original_src, envoy.listener.proxy_protocol, envoy.listener.tls_inspector
+[2022-11-25 02:34:36.721][1][info][main] [source/server/server.cc:410]   envoy.matching.network.custom_matchers: envoy.matching.custom_matchers.trie_matcher
+[2022-11-25 02:34:36.721][1][info][main] [source/server/server.cc:410]   envoy.tls.cert_validator: envoy.tls.cert_validator.default, envoy.tls.cert_validator.spiffe
+[2022-11-25 02:34:36.722][1][info][main] [source/server/server.cc:410]   envoy.transport_sockets.upstream: envoy.transport_sockets.alts, envoy.transport_sockets.http_11_proxy, envoy.transport_sockets.internal_upstream, envoy.transport_sockets.quic, envoy.transport_sockets.raw_buffer, envoy.transport_sockets.starttls, envoy.transport_sockets.tap, envoy.transport_sockets.tcp_stats, envoy.transport_sockets.tls, envoy.transport_sockets.upstream_proxy_protocol, raw_buffer, starttls, tls
+[2022-11-25 02:34:36.723][1][info][main] [source/server/server.cc:410]   envoy.thrift_proxy.transports: auto, framed, header, unframed
+[2022-11-25 02:34:36.723][1][info][main] [source/server/server.cc:410]   envoy.network.dns_resolver: envoy.network.dns_resolver.cares, envoy.network.dns_resolver.getaddrinfo
+[2022-11-25 02:34:36.723][1][info][main] [source/server/server.cc:410]   envoy.transport_sockets.downstream: envoy.transport_sockets.alts, envoy.transport_sockets.quic, envoy.transport_sockets.raw_buffer, envoy.transport_sockets.starttls, envoy.transport_sockets.tap, envoy.transport_sockets.tcp_stats, envoy.transport_sockets.tls, raw_buffer, starttls, tls
+[2022-11-25 02:34:36.723][1][info][main] [source/server/server.cc:410]   envoy.filters.http: envoy.bandwidth_limit, envoy.buffer, envoy.cors, envoy.csrf, envoy.ext_authz, envoy.ext_proc, envoy.fault, envoy.filters.http.adaptive_concurrency, envoy.filters.http.admission_control, envoy.filters.http.alternate_protocols_cache, envoy.filters.http.aws_lambda, envoy.filters.http.aws_request_signing, envoy.filters.http.bandwidth_limit, envoy.filters.http.buffer, envoy.filters.http.cache, envoy.filters.http.cdn_loop, envoy.filters.http.composite, envoy.filters.http.compressor, envoy.filters.http.cors, envoy.filters.http.csrf, envoy.filters.http.decompressor, envoy.filters.http.dynamic_forward_proxy, envoy.filters.http.ext_authz, envoy.filters.http.ext_proc, envoy.filters.http.fault, envoy.filters.http.file_system_buffer, envoy.filters.http.gcp_authn, envoy.filters.http.grpc_http1_bridge, envoy.filters.http.grpc_http1_reverse_bridge, envoy.filters.http.grpc_json_transcoder, envoy.filters.http.grpc_stats, envoy.filters.http.grpc_web, envoy.filters.http.header_to_metadata, envoy.filters.http.health_check, envoy.filters.http.ip_tagging, envoy.filters.http.jwt_authn, envoy.filters.http.local_ratelimit, envoy.filters.http.lua, envoy.filters.http.match_delegate, envoy.filters.http.oauth2, envoy.filters.http.on_demand, envoy.filters.http.original_src, envoy.filters.http.ratelimit, envoy.filters.http.rbac, envoy.filters.http.router, envoy.filters.http.set_metadata, envoy.filters.http.stateful_session, envoy.filters.http.tap, envoy.filters.http.wasm, envoy.grpc_http1_bridge, envoy.grpc_json_transcoder, envoy.grpc_web, envoy.health_check, envoy.ip_tagging, envoy.local_rate_limit, envoy.lua, envoy.rate_limit, envoy.router
+[2022-11-25 02:34:36.724][1][info][main] [source/server/server.cc:410]   envoy.filters.http.upstream: envoy.buffer, envoy.filters.http.admission_control, envoy.filters.http.buffer, envoy.filters.http.upstream_codec
+[2022-11-25 02:34:36.724][1][info][main] [source/server/server.cc:410]   network.connection.client: default, envoy_internal
+[2022-11-25 02:34:36.724][1][info][main] [source/server/server.cc:410]   envoy.http.original_ip_detection: envoy.http.original_ip_detection.custom_header, envoy.http.original_ip_detection.xff
+[2022-11-25 02:34:36.744][1][info][main] [source/server/server.cc:458] HTTP header map info:
+[2022-11-25 02:34:36.745][1][info][main] [source/server/server.cc:461]   request header map: 656 bytes: :authority,:method,:path,:protocol,:scheme,accept,accept-encoding,access-control-request-headers,access-control-request-method,access-control-request-private-network,authentication,authorization,cache-control,cdn-loop,connection,content-encoding,content-length,content-type,expect,grpc-accept-encoding,grpc-timeout,if-match,if-modified-since,if-none-match,if-range,if-unmodified-since,keep-alive,origin,pragma,proxy-connection,proxy-status,referer,te,transfer-encoding,upgrade,user-agent,via,x-client-trace-id,x-envoy-attempt-count,x-envoy-decorator-operation,x-envoy-downstream-service-cluster,x-envoy-downstream-service-node,x-envoy-expected-rq-timeout-ms,x-envoy-external-address,x-envoy-force-trace,x-envoy-hedge-on-per-try-timeout,x-envoy-internal,x-envoy-ip-tags,x-envoy-max-retries,x-envoy-original-path,x-envoy-original-url,x-envoy-retriable-header-names,x-envoy-retriable-status-codes,x-envoy-retry-grpc-on,x-envoy-retry-on,x-envoy-upstream-alt-stat-name,x-envoy-upstream-rq-per-try-timeout-ms,x-envoy-upstream-rq-timeout-alt-response,x-envoy-upstream-rq-timeout-ms,x-envoy-upstream-stream-duration-ms,x-forwarded-client-cert,x-forwarded-for,x-forwarded-host,x-forwarded-proto,x-ot-span-context,x-request-id
+[2022-11-25 02:34:36.745][1][info][main] [source/server/server.cc:461]   request trailer map: 120 bytes:
+[2022-11-25 02:34:36.745][1][info][main] [source/server/server.cc:461]   response header map: 432 bytes: :status,access-control-allow-credentials,access-control-allow-headers,access-control-allow-methods,access-control-allow-origin,access-control-allow-private-network,access-control-expose-headers,access-control-max-age,age,cache-control,connection,content-encoding,content-length,content-type,date,etag,expires,grpc-message,grpc-status,keep-alive,last-modified,location,proxy-connection,proxy-status,server,transfer-encoding,upgrade,vary,via,x-envoy-attempt-count,x-envoy-decorator-operation,x-envoy-degraded,x-envoy-immediate-health-check-fail,x-envoy-ratelimited,x-envoy-upstream-canary,x-envoy-upstream-healthchecked-cluster,x-envoy-upstream-service-time,x-request-id
+[2022-11-25 02:34:36.745][1][info][main] [source/server/server.cc:461]   response trailer map: 144 bytes: grpc-message,grpc-status
+[2022-11-25 02:34:36.752][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.shrink_heap.
+[2022-11-25 02:34:36.752][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reduce_timeouts.
+[2022-11-25 02:34:36.752][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.stop_accepting_connections.
+[2022-11-25 02:34:36.752][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reject_incoming_connections.
+[2022-11-25 02:34:36.753][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reset_high_memory_stream.
+[2022-11-25 02:34:36.753][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reduce_timeouts.
+[2022-11-25 02:34:36.753][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.stop_accepting_connections.
+[2022-11-25 02:34:36.753][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reject_incoming_connections.
+[2022-11-25 02:34:36.753][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reset_high_memory_stream.
+[2022-11-25 02:34:36.754][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reduce_timeouts.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.stop_accepting_connections.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reject_incoming_connections.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reset_high_memory_stream.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reduce_timeouts.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.stop_accepting_connections.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reject_incoming_connections.
+[2022-11-25 02:34:36.755][1][debug][main] [source/server/overload_manager_impl.cc:448] No overload action is configured for envoy.overload_actions.reset_high_memory_stream.
+[2022-11-25 02:34:36.755][1][info][main] [source/server/server.cc:821] runtime: {}
+[2022-11-25 02:34:36.756][1][warning][main] [source/server/server.cc:684] No admin address given, so no admin HTTP server started.
+[2022-11-25 02:34:36.756][1][info][config] [source/server/configuration_impl.cc:131] loading tracing configuration
+[2022-11-25 02:34:36.756][1][info][config] [source/server/configuration_impl.cc:91] loading 0 static secret(s)
+[2022-11-25 02:34:36.756][1][info][config] [source/server/configuration_impl.cc:97] loading 0 cluster(s)
+[2022-11-25 02:34:36.756][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:169] maybe finish initialize state: 1
+[2022-11-25 02:34:36.756][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:178] maybe finish initialize primary init clusters empty: true
+[2022-11-25 02:34:36.756][1][info][config] [source/server/configuration_impl.cc:101] loading 1 listener(s)
+[2022-11-25 02:34:36.756][1][debug][config] [source/server/configuration_impl.cc:103] listener #0:
+[2022-11-25 02:34:36.756][12][debug][grpc] [source/common/grpc/google_async_client_impl.cc:51] completionThread running
+[2022-11-25 02:34:36.757][1][debug][config] [source/server/listener_manager_impl.cc:465] begin add/update listener: name=listener_0 hash=8211196428865496111
+[2022-11-25 02:34:36.757][1][debug][config] [source/server/listener_manager_impl.cc:502] use full listener update path for listener name=listener_0 hash=8211196428865496111
+[2022-11-25 02:34:36.757][1][debug][config] [source/server/listener_manager_impl.cc:88]   filter #0:
+[2022-11-25 02:34:36.757][1][debug][config] [source/server/listener_manager_impl.cc:89]     name: envoy.filters.network.http_connection_manager
+[2022-11-25 02:34:36.757][1][debug][config] [source/server/listener_manager_impl.cc:92]   config: {"@type":"type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager","stat_prefix":"ingress_http","route_config":{"virtual_hosts":[{"domains":["*"],"name":"local_service","routes":[{"direct_response":{"status":200,"body":{"inline_string":"ʕ◔ϖ◔ʔ"}},"match":{"prefix":"/"}}]}],"name":"local_route"},"http_filters":[{"typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.tap.v3.Tap","common_config":{"static_config":{"output_config":{"sinks":[{"file_per_tap":{"path_prefix":"/tmp/"},"format":"JSON_BODY_AS_STRING"}]},"match_config":{"any_match":true}}}},"name":"envoy.filters.http.tap"},{"typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"},"name":"envoy.filters.http.router"}]}
+[2022-11-25 02:34:36.759][1][debug][config] [./source/common/http/filter_chain_helper.h:88]     http filter #0
+[2022-11-25 02:34:36.759][1][warning][misc] [source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.tap.v3.TapConfig Using deprecated option 'envoy.config.tap.v3.TapConfig.match_config' from file common.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2022-11-25 02:34:36.759][1][debug][tap] [source/extensions/common/tap/extension_config_base.cc:37] initializing tap extension with static config
+[2022-11-25 02:34:36.760][1][warning][misc] [source/common/protobuf/message_validator_impl.cc:21] Deprecated field: type envoy.config.tap.v3.TapConfig Using deprecated option 'envoy.config.tap.v3.TapConfig.match_config' from file common.proto. This configuration will be removed from Envoy soon. Please see https://www.envoyproxy.io/docs/envoy/latest/version_history/version_history for details. If continued use of this field is absolutely necessary, see https://www.envoyproxy.io/docs/envoy/latest/configuration/operations/runtime#using-runtime-overrides-for-deprecated-features for how to apply a temporary and highly discouraged override.
+[2022-11-25 02:34:36.760][1][debug][config] [./source/common/http/filter_chain_helper.h:118]       name: envoy.filters.http.tap
+[2022-11-25 02:34:36.760][1][debug][config] [./source/common/http/filter_chain_helper.h:121]     config: {"@type":"type.googleapis.com/envoy.extensions.filters.http.tap.v3.Tap","common_config":{"static_config":{"output_config":{"sinks":[{"file_per_tap":{"path_prefix":"/tmp/"},"format":"JSON_BODY_AS_STRING"}]},"match_config":{"any_match":true}}}}
+[2022-11-25 02:34:36.760][1][debug][config] [./source/common/http/filter_chain_helper.h:88]     http filter #1
+[2022-11-25 02:34:36.760][1][debug][config] [./source/common/http/filter_chain_helper.h:118]       name: envoy.filters.http.router
+[2022-11-25 02:34:36.760][1][debug][config] [./source/common/http/filter_chain_helper.h:121]     config: {"@type":"type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"}
+[2022-11-25 02:34:36.760][1][debug][config] [source/server/filter_chain_manager_impl.cc:322] new fc_contexts has 1 filter chains, including 1 newly built
+[2022-11-25 02:34:36.761][1][debug][init] [source/common/init/manager_impl.cc:24] added target Listener-init-target listener_0 to init manager Server
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:154] Create listen socket for listener listener_0 on address 0.0.0.0:10000
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:164] listener_0: Setting socket options succeeded
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:107] Set listener listener_0 socket factory local address to 0.0.0.0:10000
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:154] Create listen socket for listener listener_0 on address 0.0.0.0:10000
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:164] listener_0: Setting socket options succeeded
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:154] Create listen socket for listener listener_0 on address 0.0.0.0:10000
+[2022-11-25 02:34:36.761][1][debug][config] [source/server/listener_impl.cc:164] listener_0: Setting socket options succeeded
+[2022-11-25 02:34:36.762][1][debug][config] [source/server/listener_impl.cc:154] Create listen socket for listener listener_0 on address 0.0.0.0:10000
+[2022-11-25 02:34:36.762][1][debug][config] [source/server/listener_impl.cc:164] listener_0: Setting socket options succeeded
+[2022-11-25 02:34:36.762][1][debug][config] [source/server/listener_impl.cc:935] add active listener: name=listener_0, hash=8211196428865496111, tag=1, address=0.0.0.0:10000
+[2022-11-25 02:34:36.762][1][info][config] [source/server/configuration_impl.cc:113] loading stats configuration
+[2022-11-25 02:34:36.762][1][debug][init] [source/common/init/manager_impl.cc:49] init manager RTDS contains no targets
+[2022-11-25 02:34:36.762][1][debug][init] [source/common/init/watcher_impl.cc:14] init manager RTDS initialized, notifying RTDS
+[2022-11-25 02:34:36.762][1][info][runtime] [source/common/runtime/runtime_impl.cc:463] RTDS has finished initialization
+[2022-11-25 02:34:36.762][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:244] continue initializing secondary clusters
+[2022-11-25 02:34:36.762][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:169] maybe finish initialize state: 2
+[2022-11-25 02:34:36.763][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:178] maybe finish initialize primary init clusters empty: true
+[2022-11-25 02:34:36.763][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:193] maybe finish initialize secondary init clusters empty: true
+[2022-11-25 02:34:36.763][1][debug][upstream] [source/common/upstream/cluster_manager_impl.cc:220] maybe finish initialize cds api ready: false
+[2022-11-25 02:34:36.763][1][info][upstream] [source/common/upstream/cluster_manager_impl.cc:226] cm init: all clusters initialized
+[2022-11-25 02:34:36.763][1][warning][main] [source/server/server.cc:796] there is no configured limit to the number of allowed active connections. Set a limit via the runtime key overload.global_downstream_max_connections
+[2022-11-25 02:34:36.764][1][info][main] [source/server/server.cc:898] all clusters initialized. initializing init manager
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/manager_impl.cc:53] init manager Server initializing
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/target_impl.cc:15] init manager Server initializing target Listener-init-target listener_0
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/manager_impl.cc:49] init manager Listener-local-init-manager listener_0 8211196428865496111 contains no targets
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/watcher_impl.cc:14] init manager Listener-local-init-manager listener_0 8211196428865496111 initialized, notifying Listener-local-init-watcher listener_0
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/watcher_impl.cc:14] target Listener-init-target listener_0 initialized, notifying init manager Server
+[2022-11-25 02:34:36.764][1][debug][init] [source/common/init/watcher_impl.cc:14] init manager Server initialized, notifying RunHelper
+[2022-11-25 02:34:36.765][1][info][config] [source/server/listener_manager_impl.cc:849] all dependencies initialized. starting workers
+[2022-11-25 02:34:36.765][1][debug][config] [source/server/listener_manager_impl.cc:886] starting worker 0
+[2022-11-25 02:34:36.765][15][debug][main] [source/server/worker_impl.cc:124] worker entering dispatch loop
+[2022-11-25 02:34:36.765][16][debug][grpc] [source/common/grpc/google_async_client_impl.cc:51] completionThread running
+[2022-11-25 02:34:36.766][1][debug][config] [source/server/listener_manager_impl.cc:886] starting worker 1
+[2022-11-25 02:34:36.766][1][debug][config] [source/server/listener_manager_impl.cc:886] starting worker 2
+[2022-11-25 02:34:36.767][17][debug][main] [source/server/worker_impl.cc:124] worker entering dispatch loop
+[2022-11-25 02:34:36.767][18][debug][main] [source/server/worker_impl.cc:124] worker entering dispatch loop
+[2022-11-25 02:34:36.767][20][debug][grpc] [source/common/grpc/google_async_client_impl.cc:51] completionThread running
+[2022-11-25 02:34:36.767][19][debug][grpc] [source/common/grpc/google_async_client_impl.cc:51] completionThread running
+[2022-11-25 02:34:36.767][1][debug][config] [source/server/listener_manager_impl.cc:886] starting worker 3
+[2022-11-25 02:34:36.768][21][debug][main] [source/server/worker_impl.cc:124] worker entering dispatch loop
+[2022-11-25 02:34:36.769][22][debug][grpc] [source/common/grpc/google_async_client_impl.cc:51] completionThread running
+[2022-11-25 02:34:36.769][1][info][main] [source/server/server.cc:917] starting main dispatch loop
+[2022-11-25 02:34:41.766][1][debug][main] [source/server/server.cc:268] flushing stats
+[2022-11-25 02:34:41.793][15][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0x753ff5f0100 for 3600000ms, min is 3600000ms
+[2022-11-25 02:34:41.793][15][trace][connection] [source/common/network/connection_impl.cc:423] [C0] raising connection event 2
+[2022-11-25 02:34:41.793][15][debug][conn_handler] [source/server/active_tcp_listener.cc:147] [C0] new connection from 10.4.0.1:51818
+[2022-11-25 02:34:41.794][15][trace][connection] [source/common/network/connection_impl.cc:568] [C0] socket event: 3
+[2022-11-25 02:34:41.794][15][trace][connection] [source/common/network/connection_impl.cc:679] [C0] write ready
+[2022-11-25 02:34:41.795][15][trace][connection] [source/common/network/connection_impl.cc:608] [C0] read ready. dispatch_buffered_data=0
+[2022-11-25 02:34:41.795][15][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 79
+[2022-11-25 02:34:41.795][15][trace][connection] [source/common/network/raw_buffer_socket.cc:38] [C0] read error: Resource temporarily unavailable
+[2022-11-25 02:34:41.795][15][trace][http] [source/common/http/http1/codec_impl.cc:624] [C0] parsing 79 bytes
+[2022-11-25 02:34:41.796][15][trace][http] [source/common/http/http1/codec_impl.cc:566] [C0] message begin
+[2022-11-25 02:34:41.796][15][debug][http] [source/common/http/conn_manager_impl.cc:305] [C0] new stream
+[2022-11-25 02:34:41.796][15][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0x753ff5f0280 for 300000ms, min is 300000ms
+[2022-11-25 02:34:41.796][15][trace][http] [source/common/http/http1/codec_impl.cc:523] [C0] completed header: key=Host value=localhost:10000
+[2022-11-25 02:34:41.797][15][trace][http] [source/common/http/http1/codec_impl.cc:523] [C0] completed header: key=User-Agent value=curl/7.84.0
+[2022-11-25 02:34:41.797][15][trace][http] [source/common/http/http1/codec_impl.cc:816] [C0] onHeadersCompleteBase
+[2022-11-25 02:34:41.797][15][trace][http] [source/common/http/http1/codec_impl.cc:523] [C0] completed header: key=Accept value=*/*
+[2022-11-25 02:34:41.797][15][trace][http] [source/common/http/http1/codec_impl.cc:1133] [C0] Server: onHeadersComplete size=3
+[2022-11-25 02:34:41.797][15][trace][http] [source/common/http/http1/codec_impl.cc:920] [C0] message complete
+[2022-11-25 02:34:41.797][15][debug][http] [source/common/http/conn_manager_impl.cc:924] [C0][S7546064156919488590] request headers complete (end_stream=true):
 ':authority', 'localhost:10000'
 ':path', '/'
 ':method', 'GET'
-'user-agent', 'curl/7.64.1'
+'user-agent', 'curl/7.84.0'
 'accept', '*/*'
 
-[2021-05-29 10:28:45.625][21][debug][http] [source/common/http/filter_manager.cc:779] [C0][S8760797750370663101] request end stream
-[2021-05-29 10:28:45.626][21][trace][http] [source/common/http/filter_manager.cc:517] [C0][S8760797750370663101] decode headers called: filter=0xe28bf44d180 status=0
-[2021-05-29 10:28:45.627][21][debug][http] [source/common/http/filter_manager.cc:883] [C0][S8760797750370663101] Sending local reply with details direct_response
-[2021-05-29 10:28:45.627][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
-[2021-05-29 10:28:45.627][21][trace][http] [source/common/http/filter_manager.cc:1046] [C0][S8760797750370663101] encode headers called: filter=0xe28bf44d1f0 status=0
-[2021-05-29 10:28:45.627][21][debug][http] [source/common/http/conn_manager_impl.cc:1451] [C0][S8760797750370663101] encoding headers via codec (end_stream=false):
+[2022-11-25 02:34:41.798][15][debug][http] [source/common/http/conn_manager_impl.cc:907] [C0][S7546064156919488590] request end stream
+[2022-11-25 02:34:41.799][15][debug][connection] [./source/common/network/connection_impl.h:92] [C0] current connecting state: false
+[2022-11-25 02:34:41.799][15][trace][http] [source/common/http/filter_manager.cc:536] [C0][S7546064156919488590] decode headers called: filter=envoy.filters.http.tap status=0
+[2022-11-25 02:34:41.799][15][debug][http] [source/common/http/filter_manager.cc:904] [C0][S7546064156919488590] Sending local reply with details direct_response
+[2022-11-25 02:34:41.800][15][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0x753ff5f0280 for 300000ms, min is 300000ms
+[2022-11-25 02:34:41.800][15][trace][http] [source/common/http/filter_manager.cc:1058] [C0][S7546064156919488590] encode headers called: filter=envoy.filters.http.tap status=0
+[2022-11-25 02:34:41.800][15][debug][http] [source/common/http/conn_manager_impl.cc:1534] [C0][S7546064156919488590] encoding headers via codec (end_stream=false):
 ':status', '200'
 'content-length', '12'
 'content-type', 'text/plain'
-'date', 'Sat, 29 May 2021 10:28:45 GMT'
+'date', 'Fri, 25 Nov 2022 02:34:41 GMT'
 'server', 'envoy'
 
-[2021-05-29 10:28:45.628][21][trace][connection] [source/common/network/connection_impl.cc:470] [C0] writing 117 bytes, end_stream false
-[2021-05-29 10:28:45.628][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451780 for 300000ms, min is 300000ms
-[2021-05-29 10:28:45.628][21][trace][http] [source/common/http/filter_manager.cc:1194] [C0][S8760797750370663101] encode data called: filter=0xe28bf44d1f0 status=0
-[2021-05-29 10:28:45.628][21][trace][http] [source/common/http/conn_manager_impl.cc:1460] [C0][S8760797750370663101] encoding data via codec (size=12 end_stream=true)
-[2021-05-29 10:28:45.629][21][trace][connection] [source/common/network/connection_impl.cc:470] [C0] writing 12 bytes, end_stream false
-[2021-05-29 10:28:45.629][21][trace][connection] [source/common/network/connection_impl.cc:349] [C0] readDisable: disable=false disable_count=1 state=0 buffer_length=79
-[2021-05-29 10:28:45.630][21][debug][tap] [source/extensions/filters/http/tap/tap_config_impl.cc:170] submitting buffered trace sink
-[2021-05-29 10:28:45.630][21][debug][misc] [source/extensions/common/tap/tap_config_base.cc:188] Opening tap file for [id=8760797750370663101] to /tmp/_8760797750370663101.json
-[2021-05-29 10:28:45.631][21][trace][misc] [source/extensions/common/tap/tap_config_base.cc:194] Tap for [id=8760797750370663101]: http_buffered_trace {
+[2022-11-25 02:34:41.800][15][trace][connection] [source/common/network/connection_impl.cc:483] [C0] writing 117 bytes, end_stream false
+[2022-11-25 02:34:41.800][15][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0x753ff5f0280 for 300000ms, min is 300000ms
+[2022-11-25 02:34:41.800][15][trace][http] [source/common/http/filter_manager.cc:1221] [C0][S7546064156919488590] encode data called: filter=envoy.filters.http.tap status=0
+[2022-11-25 02:34:41.800][15][trace][http] [source/common/http/conn_manager_impl.cc:1544] [C0][S7546064156919488590] encoding data via codec (size=12 end_stream=true)
+[2022-11-25 02:34:41.801][15][trace][connection] [source/common/network/connection_impl.cc:483] [C0] writing 12 bytes, end_stream false
+[2022-11-25 02:34:41.801][15][trace][main] [source/common/event/dispatcher_impl.cc:250] item added to deferred deletion list (size=1)
+[2022-11-25 02:34:41.801][15][debug][tap] [source/extensions/filters/http/tap/tap_config_impl.cc:170] submitting buffered trace sink
+[2022-11-25 02:34:41.801][15][debug][misc] [source/extensions/common/tap/tap_config_base.cc:203] Opening tap file for [id=7546064156919488590] to /tmp/_7546064156919488590.json
+[2022-11-25 02:34:41.802][15][trace][misc] [source/extensions/common/tap/tap_config_base.cc:209] Tap for [id=7546064156919488590]: http_buffered_trace {
   request {
     headers {
       key: ":authority"
@@ -80,7 +232,7 @@ docker run --rm -i -t \
     }
     headers {
       key: "user-agent"
-      value: "curl/7.64.1"
+      value: "curl/7.84.0"
     }
     headers {
       key: "accept"
@@ -92,7 +244,7 @@ docker run --rm -i -t \
     }
     headers {
       key: "x-request-id"
-      value: "49c365e3-f628-4ccd-8b2c-b1ba3c33a053"
+      value: "66abd95e-7175-4840-b74e-4081cca99554"
     }
   }
   response {
@@ -110,7 +262,7 @@ docker run --rm -i -t \
     }
     headers {
       key: "date"
-      value: "Sat, 29 May 2021 10:28:45 GMT"
+      value: "Fri, 25 Nov 2022 02:34:41 GMT"
     }
     headers {
       key: "server"
@@ -122,28 +274,27 @@ docker run --rm -i -t \
   }
 }
 
-[2021-05-29 10:28:45.635][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=1)
-[2021-05-29 10:28:45.635][21][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0xe28bf451700 for 3600000ms, min is 3600000ms
-[2021-05-29 10:28:45.635][21][trace][http] [source/common/http/filter_manager.cc:517] [C0][S8760797750370663101] decode headers called: filter=0xe28bf44d260 status=1
-[2021-05-29 10:28:45.635][21][trace][http] [source/common/http/http1/codec_impl.cc:607] [C0] parsed 79 bytes
-[2021-05-29 10:28:45.635][21][trace][main] [source/common/event/dispatcher_impl.cc:115] clearing deferred deletion list (size=1)
-[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
-[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
-[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/raw_buffer_socket.cc:67] [C0] write returns: 129
-[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=true
-[2021-05-29 10:28:45.635][21][trace][connection] [source/common/network/raw_buffer_socket.cc:38] [C0] read error: Resource temporarily unavailable
-[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:547] [C0] socket event: 3
-[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:656] [C0] write ready
-[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:585] [C0] read ready. dispatch_buffered_data=false
-[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 0
-[2021-05-29 10:28:45.640][21][debug][connection] [source/common/network/connection_impl.cc:633] [C0] remote close
-[2021-05-29 10:28:45.640][21][debug][connection] [source/common/network/connection_impl.cc:243] [C0] closing socket: 0
-[2021-05-29 10:28:45.640][21][trace][connection] [source/common/network/connection_impl.cc:410] [C0] raising connection event 0
-[2021-05-29 10:28:45.640][21][debug][conn_handler] [source/server/active_tcp_listener.cc:76] [C0] adding to cleanup list
-[2021-05-29 10:28:45.640][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=1)
-[2021-05-29 10:28:45.640][21][trace][main] [source/common/event/dispatcher_impl.cc:252] item added to deferred deletion list (size=2)
-[2021-05-29 10:28:45.641][21][trace][main] [source/common/event/dispatcher_impl.cc:115] clearing deferred deletion list (size=2)
-[2021-05-29 10:28:47.393][1][debug][main] [source/server/server.cc:209] flushing stats
+[2022-11-25 02:34:41.803][15][trace][main] [source/common/event/dispatcher_impl.cc:250] item added to deferred deletion list (size=2)
+[2022-11-25 02:34:41.804][15][trace][misc] [source/common/event/scaled_range_timer_manager_impl.cc:60] enableTimer called on 0x753ff5f0100 for 3600000ms, min is 3600000ms
+[2022-11-25 02:34:41.804][15][trace][http] [source/common/http/filter_manager.cc:526] [C0][S7546064156919488590] decodeHeaders filter iteration aborted due to local reply: filter=envoy.filters.http.router
+[2022-11-25 02:34:41.804][15][trace][http] [source/common/http/filter_manager.cc:536] [C0][S7546064156919488590] decode headers called: filter=envoy.filters.http.router status=1
+[2022-11-25 02:34:41.804][15][trace][http] [source/common/http/http1/codec_impl.cc:674] [C0] parsed 79 bytes
+[2022-11-25 02:34:41.804][15][trace][main] [source/common/event/dispatcher_impl.cc:125] clearing deferred deletion list (size=2)
+[2022-11-25 02:34:41.804][15][trace][connection] [source/common/network/connection_impl.cc:568] [C0] socket event: 2
+[2022-11-25 02:34:41.804][15][trace][connection] [source/common/network/connection_impl.cc:679] [C0] write ready
+[2022-11-25 02:34:41.804][15][trace][connection] [source/common/network/raw_buffer_socket.cc:67] [C0] write returns: 129
+[2022-11-25 02:34:41.806][15][trace][connection] [source/common/network/connection_impl.cc:568] [C0] socket event: 3
+[2022-11-25 02:34:41.807][15][trace][connection] [source/common/network/connection_impl.cc:679] [C0] write ready
+[2022-11-25 02:34:41.807][15][trace][connection] [source/common/network/connection_impl.cc:608] [C0] read ready. dispatch_buffered_data=0
+[2022-11-25 02:34:41.807][15][trace][connection] [source/common/network/raw_buffer_socket.cc:24] [C0] read returns: 0
+[2022-11-25 02:34:41.807][15][debug][connection] [source/common/network/connection_impl.cc:656] [C0] remote close
+[2022-11-25 02:34:41.807][15][debug][connection] [source/common/network/connection_impl.cc:250] [C0] closing socket: 0
+[2022-11-25 02:34:41.808][15][trace][connection] [source/common/network/connection_impl.cc:423] [C0] raising connection event 0
+[2022-11-25 02:34:41.808][15][trace][conn_handler] [source/server/active_stream_listener_base.cc:111] [C0] connection on event 0
+[2022-11-25 02:34:41.808][15][debug][conn_handler] [source/server/active_stream_listener_base.cc:120] [C0] adding to cleanup list
+[2022-11-25 02:34:41.808][15][trace][main] [source/common/event/dispatcher_impl.cc:250] item added to deferred deletion list (size=1)
+[2022-11-25 02:34:41.808][15][trace][main] [source/common/event/dispatcher_impl.cc:250] item added to deferred deletion list (size=2)
+[2022-11-25 02:34:41.808][15][trace][main] [source/common/event/dispatcher_impl.cc:125] clearing deferred deletion list (size=2)
 ```
 
 ```
@@ -205,6 +356,100 @@ root@8421022db91a:/# cat /tmp/_8760797750370663101.json
     {
      "key": "date",
      "value": "Sat, 29 May 2021 10:28:45 GMT"
+    },
+    {
+     "key": "server",
+     "value": "envoy"
+    }
+   ],
+   "body": {
+    "truncated": false,
+    "as_string": "ʕ◔ϖ◔ʔ"
+   },
+   "trailers": []
+  }
+ }
+}
+```
+
+
+```
+$ curl localhost:10000 -v
+*   Trying 127.0.0.1:10000...
+* Connected to localhost (127.0.0.1) port 10000 (#0)
+> GET / HTTP/1.1
+> Host: localhost:10000
+> User-Agent: curl/7.84.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-length: 12
+< content-type: text/plain
+< date: Fri, 25 Nov 2022 02:34:41 GMT
+< server: envoy
+<
+* Connection #0 to host localhost left intact
+
+```bash
+$ docker exec -it envoy bash
+root@670629b41d37:/# cat /tmp/_7546064156919488590.json
+{
+ "http_buffered_trace": {
+  "request": {
+   "headers": [
+    {
+     "key": ":authority",
+     "value": "localhost:10000"
+    },
+    {
+     "key": ":path",
+     "value": "/"
+    },
+    {
+     "key": ":method",
+     "value": "GET"
+    },
+    {
+     "key": ":scheme",
+     "value": "http"
+    },
+    {
+     "key": "user-agent",
+     "value": "curl/7.84.0"
+    },
+    {
+     "key": "accept",
+     "value": "*/*"
+    },
+    {
+     "key": "x-forwarded-proto",
+     "value": "http"
+    },
+    {
+     "key": "x-request-id",
+     "value": "66abd95e-7175-4840-b74e-4081cca99554"
+    }
+   ],
+   "trailers": []
+  },
+  "response": {
+   "headers": [
+    {
+     "key": ":status",
+     "value": "200"
+    },
+    {
+     "key": "content-length",
+     "value": "12"
+    },
+    {
+     "key": "content-type",
+     "value": "text/plain"
+    },
+    {
+     "key": "date",
+     "value": "Fri, 25 Nov 2022 02:34:41 GMT"
     },
     {
      "key": "server",
