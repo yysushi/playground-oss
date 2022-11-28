@@ -1,0 +1,13 @@
+
+docker run --rm -i -t \
+      -v $(pwd)/envoy.yaml:/envoy.yaml \
+      -p 10000:10000 \
+      --name envoy \
+      envoyproxy/envoy-dev:latest \
+          -c /envoy.yaml
+
+$ curl -x http://127.0.0.1:10000 https://httpbin.org/ip
+{
+  "origin": "xx.xx.xx.xx"
+  
+}
