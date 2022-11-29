@@ -1,4 +1,8 @@
 
+- issue report
+
+!!! this issue was resolved by a workaround
+
 since envoy won't set ":authority" correctly during ext authz request,
 the request will loop with martian and envoy. and finally the envoy will crash with "Our FatalActions triggered a fatal signal.".
 
@@ -140,3 +144,24 @@ envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/
 envoy      |Our FatalActions triggered a fatal signal.
 ```
 
+- log after a workaround
+
+docker compose build
+docker compose up
+
+$ docker run --rm --network container:envoy --name netshoot -it nicolaka/netshoot curl -x http://martian:8080 http://envoy:10000 -v -w "\n"
+*   Trying 10.4.2.40:8080...
+* Connected to (nil) (10.4.2.40) port 8080 (#0)
+
+
+< HTTP/1.1 200 OK
+< Content-Length: 24
+< Content-Type: text/plain
+< Date: Tue, 29 Nov 2022 21:52:26 GMT
+< Server: envoy
+<
+* Connection #0 to host (nil) left intact
+ʕ◔ϖ◔ʔ < congrats!
+
+$ docker run --rm --network container:envoy --name netshoot -it nicolaka/netshoot bash -c 'curl -s http://martian:8181/logs | jq -c'
+{"log":{"version":"1.2","creator":{"name":"martian proxy","version":"2.0.0"},"entries":[{"_id":"41cdf4cf5ad015d1","startedDateTime":"2022-11-29T21:52:26.961717876Z","time":31,"request":{"method":"GET","url":"http://envoy:10000/","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"X-Forwarded-Proto","value":"http"},{"name":"Host","value":"envoy:10000"},{"name":"User-Agent","value":"curl/7.86.0"},{"name":"Accept","value":"*/*"},{"name":"X-Forwarded-Host","value":"envoy:10000"},{"name":"X-Forwarded-Url","value":"http://envoy:10000/"},{"name":"X-Forwarded-For","value":"10.4.2.38"},{"name":"Via","value":"1.1 martian-b29efee8b8357a457009"}],"queryString":[],"headersSize":-1,"bodySize":0},"response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"Content-Type","value":"text/plain"},{"name":"Date","value":"Tue, 29 Nov 2022 21:52:26 GMT"},{"name":"Server","value":"envoy"},{"name":"Content-Length","value":"24"}],"content":{"size":24,"mimeType":"text/plain","text":"ypXil5TPluKXlMqUIDwgY29uZ3JhdHMh","encoding":"base64"},"redirectURL":"","headersSize":-1,"bodySize":24},"cache":{},"timings":{"send":0,"wait":0,"receive":0}},{"_id":"b8e5d0f96386d742","startedDateTime":"2022-11-29T21:52:26.969786479Z","time":14,"request":{"method":"GET","url":"http://authorizer:10000/","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"X-Forwarded-Host","value":"authorizer:10000"},{"name":"X-Envoy-Internal","value":"true"},{"name":"X-Forwarded-For","value":"10.4.2.38, 10.4.2.38"},{"name":"X-Envoy-Expected-Rq-Timeout-Ms","value":"10000"},{"name":"Via","value":"1.1 martian-b29efee8b8357a457009"},{"name":"Host","value":"authorizer:10000"},{"name":"X-Forwarded-Proto","value":"http"},{"name":"Content-Length","value":"0"},{"name":"X-Forwarded-Url","value":"http://authorizer:10000/"}],"queryString":[],"headersSize":-1,"bodySize":0},"response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"Content-Length","value":"33"},{"name":"Content-Type","value":"text/plain"},{"name":"Date","value":"Tue, 29 Nov 2022 21:52:26 GMT"},{"name":"Server","value":"envoy"}],"content":{"size":33,"mimeType":"text/plain","text":"ypXil5TPluKXlMqUIDwgeW91J3JlIGF1dGhvcml6ZWQh","encoding":"base64"},"redirectURL":"","headersSize":-1,"bodySize":33},"cache":{},"timings":{"send":0,"wait":0,"receive":0}}]}}
