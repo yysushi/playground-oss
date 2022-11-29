@@ -1,4 +1,6 @@
 
+- as dynamic forward proxy
+
 docker run --rm -i -t \
       -v $(pwd)/envoy.yaml:/envoy.yaml \
       -p 10000:10000 \
@@ -11,3 +13,15 @@ $ curl -x http://127.0.0.1:10000 https://httpbin.org/ip
   "origin": "xx.xx.xx.xx"
   
 }
+
+- with tap
+
+tap on dynamic forward filter captures only CONNECT method...
+
+```
+$ docker exec -it envoy ls /tmp
+_7062912472477410715.json
+
+$ pbpaste | jq -c
+{"http_buffered_trace":{"request":{"headers":[{"key":":authority","value":"httpbin.org:443"},{"key":":method","value":"CONNECT"},{"key":":scheme","value":"http"},{"key":"user-agent","value":"curl/7.84.0"},{"key":"x-forwarded-proto","value":"http"},{"key":"x-request-id","value":"a13e1aac-70e0-4fd1-8ca1-0929bc057b80"},{"key":"x-envoy-expected-rq-timeout-ms","value":"15000"}],"body":{"truncated":false,"as_bytes":"FgMBATwBAAE4AwNGZy2PMurQOryVPqTysOFkU0H7QkaHRTuZGJojaxYe2SDO/RVqkTGYzWcbddjJW47TO7pVGVJ58rEwJLqR2e6P9wBiEwITAxMBwDDALMAowCTAFMAKAJ8AawA5zKnMqMyq/4UAxACIAIEAnQA9ADUAwACEwC/AK8AnwCPAE8AJAJ4AZwAzAL4ARQCcADwALwC6AEHAEcAHAAUABMASwAgAFgAKAP8BAACNACsACQgDBAMDAwIDAQAzACYAJAAdACDuKfLPnb1P0VCht3dJMw+u5KKg45V5NjbOrbhLVBljdQAAABAADgAAC2h0dHBiaW4ub3JnAAsAAgEAAAoACgAIAB0AFwAYABkADQAYABYIBgYBBgMIBQUBBQMIBAQBBAMCAQIDABAADgAMAmgyCGh0dHAvMS4xFgMDAEYQAABCQQRrlAdVBk3RCnWvuDtioQ8NuYRKwb/73/Q05v3b5vEzUyVVwgIP9oZJe2nkR1mLbZZUhNkgwVcP+ArYnvVgzt5AFAMDAAEBFgMDACgAAAAAAAAAAAKqLaI97W9neDWegylOBmiKRNul2YzMRHAGQAD+11rfFwMDADAAAAAAAAAAAevYoGtcpbbZzphKGi8uHakIooDwN9rs+sQuhyWG1zpqSDcp+q82ULQXAwMAMwAAAAAAAAAC1+WLAEVGwbFr3RLuRP5vBkwizTYLbi73fEEyoIv0MgU6O2MJLz9467sroBcDAwAlAAAAAAAAAANEMaxWifTmgNAB5jQSIkocn3vyf7DggOnLGQQN6xcDAwBBAAAAAAAAAAQ97xyUkgGO/mxfpOg+buFaEEvc429YoGovFWm4CHy4u2oh+/X0WPJPM1WVjvSWnMb+8vMl4dnCrKMXAwMAIQAAAAAAAAAFK8roNh+GUmwrbDLMDbam5krWiaZo49bSShUDAwAaAAAAAAAAAAaXZDhrb9PwwBf7WEB/lvu14NI="},"trailers":[]},"response":{"headers":[{"key":":status","value":"200"},{"key":"date","value":"Tue, 29 Nov 2022 05:00:02 GMT"},{"key":"server","value":"envoy"}],"body":{"truncated":true,"as_bytes":"FgMDAGICAABeAwO3ERV2ulmYmrtozwK4U5/VyQGcEmP68wZxRF8DLq31AiCX3EXe5mQQldgHRI4CJRLWKP4OFiiX2S970BuBKOT/msAvAAAW/wEAAQAACwAEAwABAgAQAAUAAwJoMhYDAxNQCwATTAATSQAF4TCCBd0wggTFoAMCAQICEAXuF6VMk/74WhgOr3VjAvowDQYJKoZIhvcNAQELBQAwRjELMAkGA1UEBhMCVVMxDzANBgNVBAoTBkFtYXpvbjEVMBMGA1UECxMMU2VydmVyIENBIDFCMQ8wDQYDVQQDEwZBbWF6b24wHhcNMjIxMDIxMDAwMDAwWhcNMjMxMTE5MjM1OTU5WjAWMRQwEgYDVQQDEwtodHRwYmluLm9yZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMqIlckUX371nHP5ECY+IbUT2Xmnz2AGcwoHfbUH0JrQiV1gwMpy97JT34QALjtL1scjR00xC2wh8Q+N5z4Ek+x1MBv2Y7K2NN/jOCGhIgbzedzrJyeVHpJh9htOB02XbAKaHPTkm/uGgRpZCErDcZ/EgkRd2vJJ/ebQ9uyE6AaMzV6LCm8sypYv/YNK6pnkB6hh7S7rhLDGXFp/XV2yrjAe59XNXuF4gTYKMEGRjVglNPXx+el/3zfEGfjnj/9RcuZmjqozEXgAHsZG6Eusi2cDh8wjwRqMbGsuNHHSN6Y8/FE/LKrjKMJZmb4SzZDiNRpMbnFF4RWmmaKpi64IfacCAwEAAaOCAvUwggLxMB8GA1UdIwQYMBaAFFmkZgZSoHuVkjyjlAcnlnRb+T3QMB0GA1UdDgQWBBTyYj6oVq3IgszamzT6poST2JWfGzAlBgNVHREEHjAcggtodHRwYmluLm9yZ4INKi5odHRwYmluLm9yZzAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMD0GA1UdHwQ2MDQwMqAwoC6GLGh0dHA6Ly9jcmwuc2NhMWIuYW1hem9udHJ1c3QuY29tL3NjYTFiLTEuY3JsMBMGA1UdIAQMMAowCAYGZ4EMAQIBMHUGCCsGAQUFBwEBBGkwZzAtBggrBgEFBQcwAYYhaHR0cDovL29jc3Auc2NhMWIuYW1hem9udHJ1c3QuY29tMDYGCCsGAQUFBzAChipodHRwOi8vY3J0LnNjYTFiLmFtYXpvbnRydXN0LmNvbS9zY2ExYi5jcnQwDAYDVR0TAQH/BAIwADCCAX4GCisGAQQB1nkCBAIEggFuBIIBagFoAHYA6D7Q2j71BjUy51covIlryQPTy9ERa+zraeF3fW0GvW4AAA=="},"trailers":[]}}}
+```
