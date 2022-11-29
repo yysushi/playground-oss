@@ -1,0 +1,142 @@
+
+since envoy won't set ":authority" correctly during ext authz request,
+the request will loop with martian and envoy. and finally the envoy will crash with "Our FatalActions triggered a fatal signal.".
+
+```
+$ docker run --rm --network container:envoy --name netshoot -it nicolaka/netshoot curl -x http://martian:8080 http://envoy:10000 -v -w "\n"
+*   Trying 10.4.2.45:8080...
+* Connected to (nil) (10.4.2.45) port 8080 (#0)
+> GET http://envoy:10000/ HTTP/1.1
+> Host: envoy:10000
+> User-Agent: curl/7.86.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 403 Forbidden
+< Date: Tue, 29 Nov 2022 22:05:31 GMT
+< Server: envoy
+< Content-Length: 0
+<
+* Connection #0 to host (nil) left intact
+```
+
+```
+martian    |2022/11/29 22:05:21 INFO:
+martian    |--------------------------------------------------------------------------------
+martian    |Request to http://envoy:10000/
+martian    |--------------------------------------------------------------------------------
+martian    |GET http://envoy:10000/ HTTP/1.1
+martian    |Host: envoy:10000
+martian    |Content-Length: 0
+martian    |Accept: */*
+martian    |User-Agent: curl/7.86.0
+martian    |Via: 1.1 martian-89beaca409c0221d6ebf
+martian    |X-Forwarded-For: 10.4.2.46
+martian    |X-Forwarded-Host: envoy:10000
+martian    |X-Forwarded-Proto: http
+martian    |X-Forwarded-Url: http://envoy:10000/
+martian    |
+martian    |
+martian    |--------------------------------------------------------------------------------
+martian    |
+envoy      |[2022-11-29 22:05:21.355][16][debug][conn_handler] [source/server/active_tcp_listener.cc:147] [C0] new connection from 10.4.2.45:40918
+envoy      |[2022-11-29 22:05:21.356][16][debug][http] [source/common/http/conn_manager_impl.cc:305] [C0] new stream
+envoy      |[2022-11-29 22:05:21.356][16][debug][http] [source/common/http/conn_manager_impl.cc:924] [C0][S5826917283907839878] request headers complete (end_stream=true):
+envoy      |':authority', 'envoy:10000'
+envoy      |':path', '/'
+envoy      |':method', 'GET'
+envoy      |'user-agent', 'curl/7.86.0'
+envoy      |'accept', '*/*'
+envoy      |'via', '1.1 martian-89beaca409c0221d6ebf'
+envoy      |'x-forwarded-for', '10.4.2.46'
+envoy      |'x-forwarded-host', 'envoy:10000'
+envoy      |'x-forwarded-proto', 'http'
+envoy      |'x-forwarded-url', 'http://envoy:10000/'
+envoy      |'accept-encoding', 'gzip'
+envoy      |
+...
+
+envoy      |[2022-11-29 22:05:31.366][20][critical][backtrace] [./source/server/backtrace.h:98] #44: [0x7fb1dc8e7609]
+envoy      |ActiveStream 0x25ccbe1b8400, stream_id_: 5434844486869784491&filter_manager_:
+envoy      |  FilterManager 0x25ccbe1b8490, state_.has_1xx_headers_: 0
+envoy      |  filter_manager_callbacks_.requestHeaders():
+envoy      |    ':authority', 'envoy:10000'
+envoy      |    ':path', '/'
+envoy      |    ':method', 'GET'
+envoy      |    ':scheme', 'http'
+envoy      |    'user-agent', 'Go-http-client/1.1'
+envoy      |    'via', '1.1 martian-89beaca409c0221d6ebf'
+envoy      |    'x-forwarded-for', '10.4.2.46, 10.4.2.46'
+envoy      |    'x-forwarded-host', 'envoy:10000'
+envoy      |    'x-forwarded-proto', 'http'
+envoy      |    'x-forwarded-url', 'http://envoy:10000/'
+envoy      |    'accept-encoding', 'gzip'
+envoy      |    'x-request-id', '977ed1d5-e9bb-47d5-9d21-64295b3f5cd2'
+envoy      |  filter_manager_callbacks_.requestTrailers():   null
+envoy      |  filter_manager_callbacks_.responseHeaders():   null
+envoy      |  filter_manager_callbacks_.responseTrailers():   null
+envoy      |  &streamInfo():
+envoy      |    StreamInfoImpl 0x25ccbe1b85c8, protocol_: 1, response_code_: null, response_code_details_: null, attempt_count_: null, health_check_request_: 0, route_name_:     upstream_info_:     null
+envoy      |    OverridableRemoteConnectionInfoSetterStreamInfo 0x25ccbe1b85c8, remoteAddress(): 10.4.2.46:0, directRemoteAddress(): 10.4.2.45:33126, localAddress(): 10.4.2.46:10000
+envoy      |Http1::ConnectionImpl 0x25ccbe1d7708, dispatching_: 1, dispatching_slice_already_drained_: 0, reset_stream_called_: 0, handling_upgrade_: 0, deferred_end_stream_headers_: 1, processing_trailers_: 0, buffered_body_.length(): 0, header_parsing_state_: Done, current_header_field_: , current_header_value_:
+envoy      |active_request_:
+envoy      |, request_url_: null, response_encoder_.local_end_stream_: 0
+envoy      |absl::get<RequestHeaderMapPtr>(headers_or_trailers_): null
+envoy      |current_dispatching_buffer_ front_slice length: 327 contents: "GET / HTTP/1.1\r\nHost: envoy:10000\r\nUser-Agent: Go-http-client/1.1\r\nVia: 1.1 martian-89beaca409c0221d6ebf\r\nX-Envoy-Expected-Rq-Timeout-Ms: 10000\r\nX-Envoy-Internal: true\r\nX-Forwarded-For: 10.4.2.46, 10.4.2.46\r\nX-Forwarded-Host: envoy:10000\r\nX-Forwarded-Proto: http\r\nX-Forwarded-Url: http://envoy:10000/\r\nAccept-Encoding: gzip\r\n\r\n"
+envoy      |ConnectionImpl 0x25ccbe12e730, connecting_: 0, bind_error_: 0, state(): Open, read_buffer_limit_: 1048576
+envoy      |socket_:
+envoy      |  ListenSocketImpl 0x25ccbe1c5200, transport_protocol_: raw_buffer
+envoy      |  connection_info_provider_:
+envoy      |    ConnectionInfoSetterImpl 0x25ccbe03c428, remote_address_: 10.4.2.45:33126, direct_remote_address_: 10.4.2.45:33126, local_address_: 10.4.2.46:10000, server_name_:
+envoy      |[2022-11-29 22:05:31.368][20][critical][backtrace] [./source/server/backtrace.h:104] Caught Segmentation fault, suspect faulting address 0x0
+envoy      |[2022-11-29 22:05:31.368][20][critical][backtrace] [./source/server/backtrace.h:91] Backtrace (use tools/stack_decode.py to get line numbers):
+envoy      |[2022-11-29 22:05:31.368][20][critical][backtrace] [./source/server/backtrace.h:92] Envoy version: b8f85f43b90d69b9e7303d68d1ea585f723759d0/1.25.0-dev/Clean/RELEASE/BoringSSL
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #0: [0x7fb1dc8f3420]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #1: [0x557c896d8cae]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #2: [0x557c895e6bac]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #3: [0x557c895e2f75]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #4: [0x557c895db43f]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #5: [0x557c895d20b9]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #6: [0x557c891209e9]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #7: [0x557c878c1f1d]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #8: [0x557c878c20c5]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #9: [0x557c8910032e]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #10: [0x557c89100196]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #11: [0x557c891014cc]
+envoy      |[2022-11-29 22:05:31.369][20][critical][backtrace] [./source/server/backtrace.h:98] #12: [0x557c89101873]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #13: [0x557c891147cb]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #14: [0x557c89117236]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #15: [0x557c89106ac2]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #16: [0x557c89399c95]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #17: [0x557c893b1a23]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #18: [0x557c8939f897]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #19: [0x557c89365dd6]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #20: [0x557c89364998]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #21: [0x557c8936442b]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #22: [0x557c87ad2db0]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #23: [0x557c87ac5ed0]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #24: [0x557c87ac6401]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #25: [0x557c894212e4]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #26: [0x557c892a4081]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #27: [0x557c892d053a]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #28: [0x557c892cd387]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #29: [0x557c892cd0d8]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #30: [0x557c896f31f7]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #31: [0x557c892cb3a6]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #32: [0x557c892cac0f]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #33: [0x557c892d039f]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #34: [0x557c8929fe8c]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #35: [0x557c895e8825]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #36: [0x557c895e1998]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #37: [0x557c895df842]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #38: [0x557c895d5131]
+envoy      |[2022-11-29 22:05:31.370][20][critical][backtrace] [./source/server/backtrace.h:98] #39: [0x557c895d64fd]
+envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/backtrace.h:98] #40: [0x557c896ecc70]
+envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/backtrace.h:98] #41: [0x557c896eb5b1]
+envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/backtrace.h:98] #42: [0x557c88e234c4]
+envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/backtrace.h:98] #43: [0x557c898c2d33]
+envoy      |[2022-11-29 22:05:31.371][20][critical][backtrace] [./source/server/backtrace.h:98] #44: [0x7fb1dc8e7609]
+envoy      |Our FatalActions triggered a fatal signal.
+```
+

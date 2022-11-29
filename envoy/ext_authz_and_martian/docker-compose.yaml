@@ -8,6 +8,7 @@ services:
       - ./envoy.yaml:/etc/envoy.yaml
     depends_on:
       - authorizer
+      - martian
     command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
     container_name: envoy
   authorizer:
@@ -18,3 +19,13 @@ services:
     container_name: authorizer
     expose:
       - "10000"
+  martian:
+    image: martian
+    build:
+      context: .
+    expose:
+      - "8080"
+      - "8181"
+    container_name: martian
+    depends_on:
+      - authorizer

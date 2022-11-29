@@ -13,9 +13,10 @@ static_resources:
       - lb_endpoints:
         - endpoint:
             address:
+              # via proxy
               socket_address:
-                address: authorizer
-                port_value: 10000
+                address: martian
+                port_value: 8080
   listeners:
   - name: listener_0
     address:
@@ -29,17 +30,6 @@ static_resources:
           "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
           stat_prefix: ingress_http
           http_filters:
-          - name: envoy.filters.http.tap
-            typed_config:
-              "@type": type.googleapis.com/envoy.extensions.filters.http.tap.v3.Tap
-              common_config:
-                static_config:
-                  match_config:
-                    any_match: true
-                  output_config:
-                    sinks:
-                      - file_per_tap:
-                          path_prefix: /tmp/
           - name: extensions.filters.http.ext_authz
             typed_config:
               "@type": type.googleapis.com/envoy.extensions.filters.http.ext_authz.v3.ExtAuthz
