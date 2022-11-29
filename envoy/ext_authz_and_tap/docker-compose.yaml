@@ -1,0 +1,20 @@
+---
+
+version: "3.8"
+services:
+  envoy:
+    image: envoyproxy/envoy-dev:latest
+    volumes:
+      - ./envoy.yaml:/etc/envoy.yaml
+    depends_on:
+      - authorizer
+    command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
+    container_name: envoy
+  authorizer:
+    image: envoyproxy/envoy-dev:latest
+    volumes:
+      - ./authorizer.yaml:/etc/envoy.yaml
+    command: ["-c", "/etc/envoy.yaml", "-l", "debug"]
+    container_name: authorizer
+    expose:
+      - "10000"

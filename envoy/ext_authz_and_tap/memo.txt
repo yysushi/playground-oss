@@ -1,0 +1,101 @@
+
+docker compose up
+
+docker run --rm --network container:envoy --name netshoot -it nicolaka/netshoot curl http://envoy:10000 -v -w "\n"
+*   Trying 10.4.1.16:10000...
+* Connected to envoy (10.4.1.16) port 10000 (#0)
+> GET / HTTP/1.1
+> Host: envoy:10000
+> User-Agent: curl/7.86.0
+> Accept: */*
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< content-length: 26
+< content-type: text/plain
+< date: Tue, 29 Nov 2022 07:24:46 GMT
+< server: envoy
+<
+* Connection #0 to host envoy left intact
+ʕ◔ϖ◔ʔ < congrats!\n
+
+
+$ docker exec -it authorizer cat /tmp/_3337167683271366758.json
+{
+ "http_buffered_trace": {
+  "request": {
+   "headers": [
+    {
+     "key": ":authority",
+     "value": "envoy:10000"
+    },
+    {
+     "key": ":path",
+     "value": "/"
+    },
+    {
+     "key": ":method",
+     "value": "GET"
+    },
+    {
+     "key": ":scheme",
+     "value": "http"
+    },
+    {
+     "key": "content-length",
+     "value": "0"
+    },
+    {
+     "key": "x-forwarded-for",
+     "value": "10.4.1.20"
+    },
+    {
+     "key": "x-envoy-expected-rq-timeout-ms",
+     "value": "10000"
+    },
+    {
+     "key": "x-forwarded-proto",
+     "value": "http"
+    },
+    {
+     "key": "x-envoy-internal",
+     "value": "true"
+    },
+    {
+     "key": "x-request-id",
+     "value": "77093a18-c536-4ec0-86c8-594dd7d15f08"
+    }
+   ],
+   "trailers": []
+  },
+  "response": {
+   "headers": [
+    {
+     "key": ":status",
+     "value": "200"
+    },
+    {
+     "key": "content-length",
+     "value": "33"
+    },
+    {
+     "key": "content-type",
+     "value": "text/plain"
+    },
+    {
+     "key": "date",
+     "value": "Tue, 29 Nov 2022 07:25:43 GMT"
+    },
+    {
+     "key": "server",
+     "value": "envoy"
+    }
+   ],
+   "body": {
+    "truncated": false,
+    "as_bytes": "ypXil5TPluKXlMqUIDwgeW91J3JlIGF1dGhvcml6ZWQh"
+   },
+   "trailers": []
+  }
+ }
+}
