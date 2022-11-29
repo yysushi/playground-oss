@@ -1,0 +1,163 @@
+
+- proxy
+
+$ proxy -har -v=2 -api=localhost
+2022/11/29 14:48:13 martian: starting proxy on [::]:8080 and api on [::]:8181
+2022/11/29 14:48:21 INFO:
+--------------------------------------------------------------------------------
+Request to http://httpbin.org/ip
+--------------------------------------------------------------------------------
+GET http://httpbin.org/ip HTTP/1.1
+Host: httpbin.org
+Content-Length: 0
+Accept: */*
+User-Agent: curl/7.84.0
+Via: 1.1 martian-df65bb7f328e42e31385
+X-Forwarded-For: 127.0.0.1
+X-Forwarded-Host: httpbin.org
+X-Forwarded-Proto: http
+X-Forwarded-Url: http://httpbin.org/ip
+
+
+--------------------------------------------------------------------------------
+
+2022/11/29 14:48:22 INFO:
+--------------------------------------------------------------------------------
+Response from http://httpbin.org/ip
+--------------------------------------------------------------------------------
+HTTP/1.1 200 OK
+Content-Length: 43
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: *
+Content-Type: application/json
+Date: Tue, 29 Nov 2022 05:48:22 GMT
+Server: gunicorn/19.9.0
+
+{
+  "origin": "127.0.0.1, 153.156.2.123"
+}
+
+--------------------------------------------------------------------------------
+
+2022/11/29 14:48:41 INFO:
+--------------------------------------------------------------------------------
+Request to http://httpbin.org:443
+--------------------------------------------------------------------------------
+CONNECT http://httpbin.org:443 HTTP/1.1
+Host: httpbin.org:443
+Content-Length: 0
+User-Agent: curl/7.84.0
+Via: 1.1 martian-df65bb7f328e42e31385
+X-Forwarded-For: 127.0.0.1
+X-Forwarded-Host: httpbin.org:443
+X-Forwarded-Proto: http
+X-Forwarded-Url: http://httpbin.org:443
+
+
+--------------------------------------------------------------------------------
+
+2022/11/29 14:48:41 INFO:
+--------------------------------------------------------------------------------
+Response from http://httpbin.org:443
+--------------------------------------------------------------------------------
+HTTP/1.1 200 OK
+Content-Length: 0
+
+
+--------------------------------------------------------------------------------
+
+- client
+
+$ curl -v -x http://localhost:8080 http://httpbin.org/ip
+*   Trying 127.0.0.1:8080...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+> GET http://httpbin.org/ip HTTP/1.1
+> Host: httpbin.org
+> User-Agent: curl/7.84.0
+> Accept: */*
+> Proxy-Connection: Keep-Alive
+>
+* Mark bundle as not supporting multiuse
+< HTTP/1.1 200 OK
+< Content-Length: 43
+< Access-Control-Allow-Credentials: true
+< Access-Control-Allow-Origin: *
+< Content-Type: application/json
+< Date: Tue, 29 Nov 2022 05:48:22 GMT
+< Server: gunicorn/19.9.0
+<
+{
+  "origin": "127.0.0.1, 153.156.2.123"
+}
+* Connection #0 to host localhost left intact
+yysushi: ~/g/g/y/p/martian (main ⇡?)$ curl -v -x http://localhost:8080 https://httpbin.org/ip
+*   Trying 127.0.0.1:8080...
+* Connected to localhost (127.0.0.1) port 8080 (#0)
+* allocate connect buffer
+* Establish HTTP proxy tunnel to httpbin.org:443
+> CONNECT httpbin.org:443 HTTP/1.1
+> Host: httpbin.org:443
+> User-Agent: curl/7.84.0
+> Proxy-Connection: Keep-Alive
+>
+< HTTP/1.1 200 OK
+< Connection: close
+<
+* Proxy replied 200 to CONNECT request
+* CONNECT phase completed
+* ALPN: offers h2
+* ALPN: offers http/1.1
+*  CAfile: /etc/ssl/cert.pem
+*  CApath: none
+* (304) (OUT), TLS handshake, Client hello (1):
+* (304) (IN), TLS handshake, Server hello (2):
+* TLSv1.2 (IN), TLS handshake, Certificate (11):
+* TLSv1.2 (IN), TLS handshake, Server key exchange (12):
+* TLSv1.2 (IN), TLS handshake, Server finished (14):
+* TLSv1.2 (OUT), TLS handshake, Client key exchange (16):
+* TLSv1.2 (OUT), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (OUT), TLS handshake, Finished (20):
+* TLSv1.2 (IN), TLS change cipher, Change cipher spec (1):
+* TLSv1.2 (IN), TLS handshake, Finished (20):
+* SSL connection using TLSv1.2 / ECDHE-RSA-AES128-GCM-SHA256
+* ALPN: server accepted h2
+* Server certificate:
+*  subject: CN=httpbin.org
+*  start date: Oct 21 00:00:00 2022 GMT
+*  expire date: Nov 19 23:59:59 2023 GMT
+*  subjectAltName: host "httpbin.org" matched cert's "httpbin.org"
+*  issuer: C=US; O=Amazon; OU=Server CA 1B; CN=Amazon
+*  SSL certificate verify ok.
+* Using HTTP2, server supports multiplexing
+* Copying HTTP/2 data in stream buffer to connection buffer after upgrade: len=0
+* h2h3 [:method: GET]
+* h2h3 [:path: /ip]
+* h2h3 [:scheme: https]
+* h2h3 [:authority: httpbin.org]
+* h2h3 [user-agent: curl/7.84.0]
+* h2h3 [accept: */*]
+* Using Stream ID: 1 (easy handle 0x7fe3c4811a00)
+> GET /ip HTTP/2
+> Host: httpbin.org
+> user-agent: curl/7.84.0
+> accept: */*
+>
+* Connection state changed (MAX_CONCURRENT_STREAMS == 128)!
+< HTTP/2 200
+< date: Tue, 29 Nov 2022 05:48:42 GMT
+< content-type: application/json
+< content-length: 32
+< server: gunicorn/19.9.0
+< access-control-allow-origin: *
+< access-control-allow-credentials: true
+<
+{
+  "origin": "153.156.2.123"
+}
+* Connection #0 to host localhost left intact
+
+- log
+
+$ curl -s http://localhost:8181/logs | jq -c
+{"log":{"version":"1.2","creator":{"name":"martian proxy","version":"2.0.0"},"entries":[{"_id":"f3bbd1bc3a96fa9c","startedDateTime":"2022-11-29T05:48:21.745063Z","time":409,"request":{"method":"GET","url":"http://httpbin.org/ip","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"Accept","value":"*/*"},{"name":"X-Forwarded-Host","value":"httpbin.org"},{"name":"X-Forwarded-Url","value":"http://httpbin.org/ip"},{"name":"X-Forwarded-For","value":"127.0.0.1"},{"name":"Via","value":"1.1 martian-df65bb7f328e42e31385"},{"name":"X-Forwarded-Proto","value":"http"},{"name":"Host","value":"httpbin.org"},{"name":"User-Agent","value":"curl/7.84.0"}],"queryString":[],"headersSize":-1,"bodySize":0},"response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"Date","value":"Tue, 29 Nov 2022 05:48:22 GMT"},{"name":"Content-Length","value":"43"},{"name":"Content-Type","value":"application/json"},{"name":"Server","value":"gunicorn/19.9.0"},{"name":"Access-Control-Allow-Origin","value":"*"},{"name":"Access-Control-Allow-Credentials","value":"true"}],"content":{"size":43,"mimeType":"application/json","text":"ewogICJvcmlnaW4iOiAiMTI3LjAuMC4xLCAxNTMuMTU2LjIuMTIzIgp9Cg==","encoding":"base64"},"redirectURL":"","headersSize":-1,"bodySize":43},"cache":{},"timings":{"send":0,"wait":0,"receive":0}},{"_id":"d2a2019812434ad5","startedDateTime":"2022-11-29T05:48:41.747138Z","time":181,"request":{"method":"CONNECT","url":"http://httpbin.org:443","httpVersion":"HTTP/1.1","cookies":[],"headers":[{"name":"X-Forwarded-Host","value":"httpbin.org:443"},{"name":"X-Forwarded-Url","value":"http://httpbin.org:443"},{"name":"X-Forwarded-For","value":"127.0.0.1"},{"name":"Via","value":"1.1 martian-df65bb7f328e42e31385"},{"name":"X-Forwarded-Proto","value":"http"},{"name":"User-Agent","value":"curl/7.84.0"},{"name":"Host","value":"httpbin.org:443"}],"queryString":[],"headersSize":-1,"bodySize":0},"response":{"status":200,"statusText":"OK","httpVersion":"HTTP/1.1","cookies":[],"headers":[],"content":{"size":0,"mimeType":"","encoding":"base64"},"redirectURL":"","headersSize":-1,"bodySize":0},"cache":{},"timings":{"send":0,"wait":0,"receive":0}}]}}
+

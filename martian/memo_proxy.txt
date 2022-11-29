@@ -1,0 +1,27 @@
+
+
+
+there are two patterns. that depends on the destination protocol is HTTP or HTTPS.
+
+client <-> proxy <-> server
+
+
+client -> proxy
+          proxy -> server
+          proxy <- server
+client <- proxy
+
+- HTTP
+
+proxy just forwards b/w client and server.
+
+- HTTPS
+
+two steps. one is connect. the other is forwarding request/response data.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/CONNECT
+
+client <-> proxy              : ask proxy to connect server by CONNECT method
+           proxy <-> server   : establish TLS connection on behalf of client and continues proxy the TCP stream to and from client
+
+the data to server is tunnneled by HTTP b/w client and proxy

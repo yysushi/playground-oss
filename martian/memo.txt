@@ -1,0 +1,16 @@
+
+- install
+
+go install github.com/google/martian/cmd/proxy@latest
+
+- run
+
+$ proxy -har -v=2 -api=localhost
+
+- test
+
+$ curl -v -x http://localhost:8080 http://httpbin.org/ip
+
+- check log
+
+$ curl -s http://localhost:8181/logs | jq -c
