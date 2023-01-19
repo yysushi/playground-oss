@@ -1,0 +1,11 @@
+
+<https://vuepress.vuejs.org/guide/getting-started.html>
+
+- install
+npm install vuepress
+
+- make document
+mkdir docs && echo '# Hello VuePress' > docs/README.md
+
+- serve docs
+./node_modules/.bin/vuepress dev docs  # export NODE_OPTIONS=--openssl-legacy-provider
