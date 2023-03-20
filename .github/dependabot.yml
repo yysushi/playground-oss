@@ -1,6 +1,0 @@
-version: 2
-updates:
-- package-ecosystem: "gomod"
-  directory: "/dependabot/gomod"
-  schedule:
-    interval: "daily"
