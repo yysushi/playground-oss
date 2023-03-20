@@ -1,0 +1,4 @@
+
+- gomod
+
+go get github.com/mattn/go-runewidth@v0.0.10
