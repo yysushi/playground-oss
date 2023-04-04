@@ -1,2 +1,57 @@
-docker run -p 8080:80 --name proxy nginx:latest
+- steal default config
+
+docker run -p 8080:80 --rm --name proxy nginx:latest
 docker cp proxy:/etc/nginx/conf.d/default.conf conf.d/default.conf
+
+- priority
+
+http://nginx.org/en/docs/http/ngx_http_core_module.html#location
+1. an exact matching location (ex. "= /abc")
+2. just check the longest matching prefix location (ex. "/")
+   2.a. no fall through to 3, if the longest matching location has "^~" (ex. "^~ /abc")
+3. the first matching location with regex (ex. "~ /[a-c]+")
+   3.a. case-insensitive matching (ex. "~* /[a-c]+")
+   3.b. case-sensitive matching (ex. "~ /[a-c]+")
+4. use the longest matching prefix location in 2
+
+1.
+docker run -p 8080:80 --rm -v $(pwd)/conf.d/default1.conf:/etc/nginx/conf.d/default.conf --name proxy nginx:latest
+$ diff conf.d/default1.conf conf.d/default3.conf
+29,34d28
+<     # 1. exact location
+<     location = /abc {
+<         root   /usr/share/nginx/html;
+<         try_files index.html =400;
+<     }
+<
+$ curl localhost:8080/abc -I
+HTTP/1.1 400 Bad Request
+Server: nginx/1.23.4
+Date: Mon, 03 Apr 2023 09:29:37 GMT
+Content-Type: text/html
+Content-Length: 157
+Connection: close
+
+3.
+docker run -p 8080:80 --rm -v $(pwd)/conf.d/default4.conf:/etc/nginx/conf.d/default.conf --name proxy nginx:latest
+
+$ diff conf.d/default3.conf conf.d/default4.conf
+20c20
+<         try_files index.html =402;
+---
+>         try_files index.html =403;
+23,28d22
+<     # 3. regex location
+<     location ~ /[a-c]+ {
+<         root   /usr/share/nginx/html;
+<         try_files index.html =401;
+<     }
+<
+
+$ curl localhost:8080/abc -I
+HTTP/1.1 403 Forbidden
+Server: nginx/1.23.4
+Date: Mon, 03 Apr 2023 09:32:06 GMT
+Content-Type: text/html
+Content-Length: 153
+Connection: keep-alive
