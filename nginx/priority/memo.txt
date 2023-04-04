@@ -1,0 +1,2 @@
+docker run -p 8080:80 --name proxy nginx:latest
+docker cp proxy:/etc/nginx/conf.d/default.conf conf.d/default.conf
