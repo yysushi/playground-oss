@@ -58,3 +58,14 @@ services:
       - ./prometheus.yaml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    restart: always
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_USERS_DEFAULT_THEME=${GF_USERS_DEFAULT_THEME}
