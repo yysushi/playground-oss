@@ -4,3 +4,22 @@ https://opentelemetry.io/docs/instrumentation/go/getting-started/
 
 https://gist.github.com/yysushi/a20b0a2cd6061acf7780b9b080111d44
 
+
+opentelemetry is split into two parts;
+- an API to instrument code with
+- SDKs that implement the API
+
+Tracing API provides a Tracer to create traces.
+it can be associated with one instrumentation library.
+
+a trace is a type of telemetry that represents work being done by a service. A trace is a record of the connection(s) between participants processing a transaction, often through client/server requests processing and other forms of communication.
+
+Each part of the work that a service performs is represented in the trace by a span. Those spans are not just an unordered collection. Like the call stack of our application, those spans are defined with relationships to one another. The “root” span is the only span without a parent, it represents how a service request is started. All other spans have a parent relationship to another span in the same trace.
+
+
+span -> Run(), Poll(), Write(), Fibonacci()
+
+Run
+├── Poll
+└── Write
+    └── Fibonacci

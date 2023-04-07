@@ -14,5 +14,4 @@ func Fibonacci(n uint) (uint64, error) {
 	}
 
 	return n2 + n1, nil
-
 }
