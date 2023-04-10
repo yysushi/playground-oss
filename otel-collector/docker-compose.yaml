@@ -12,11 +12,13 @@ services:
 
   # Collector
   otel-collector:
-    image: ${OTELCOL_IMG}
+    build:
+      context: .
     restart: always
-    command: ["--config=/etc/otel-collector-config.yaml", "${OTELCOL_ARGS}"]
+    command: ["--config=/etc/otelcol-config.yaml", "${OTELCOL_ARGS}"]
     volumes:
-      - ./otel-collector-config.yaml:/etc/otel-collector-config.yaml
+      - ./otelcol-config.yaml:/etc/otelcol-config.yaml
+      - ./otelcol-output:/output
     ports:
       - "1888:1888"   # pprof extension
       - "8888:8888"   # Prometheus metrics exposed by the collector

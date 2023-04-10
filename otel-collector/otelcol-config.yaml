@@ -16,6 +16,9 @@ exporters:
     tls:
       insecure: true
 
+  file:
+    path: /output/data.json
+
 processors:
   batch:
 
@@ -32,8 +35,8 @@ service:
     traces:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, jaeger]
+      exporters: [logging, jaeger, file]
     metrics:
       receivers: [otlp]
       processors: [batch]
-      exporters: [logging, prometheus]
+      exporters: [logging, prometheus, file]
