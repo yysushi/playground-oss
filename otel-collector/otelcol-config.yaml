@@ -1,7 +1,7 @@
 receivers:
-  otlp:
-    protocols:
-      grpc:
+  file:
+    path: /output/data.json
+    throttle: 0
 
 exporters:
   prometheus:
@@ -16,9 +16,6 @@ exporters:
     tls:
       insecure: true
 
-  file:
-    path: /output/data.json
-
 processors:
   batch:
 
@@ -32,11 +29,7 @@ extensions:
 service:
   extensions: [pprof, zpages, health_check]
   pipelines:
-    traces:
-      receivers: [otlp]
-      processors: [batch]
-      exporters: [logging, jaeger, file]
     metrics:
-      receivers: [otlp]
+      receivers: [file]
       processors: [batch]
-      exporters: [logging, prometheus, file]
+      exporters: [logging, prometheus]
