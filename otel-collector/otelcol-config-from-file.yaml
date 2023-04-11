@@ -1,15 +1,16 @@
 receivers:
-  file:
-    path: /output/data.json
-    throttle: 0
+  otlpjsonfile:
+    include:
+      - /output/data.json
+    start_at:  beginning
 
 exporters:
+  logging:
+
   prometheus:
     endpoint: "0.0.0.0:8889"
     const_labels:
       label1: value1
-
-  logging:
 
   jaeger:
     endpoint: jaeger-all-in-one:14250
@@ -29,7 +30,11 @@ extensions:
 service:
   extensions: [pprof, zpages, health_check]
   pipelines:
+    traces:
+      receivers: [otlpjsonfile]
+      processors: [batch]
+      exporters: [logging, jaeger]
     metrics:
-      receivers: [file]
+      receivers: [otlpjsonfile]
       processors: [batch]
       exporters: [logging, prometheus]
