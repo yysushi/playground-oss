@@ -17,9 +17,29 @@ a trace is a type of telemetry that represents work being done by a service. A t
 Each part of the work that a service performs is represented in the trace by a span. Those spans are not just an unordered collection. Like the call stack of our application, those spans are defined with relationships to one another. The “root” span is the only span without a parent, it represents how a service request is started. All other spans have a parent relationship to another span in the same trace.
 
 
+----
+
 span -> Run(), Poll(), Write(), Fibonacci()
 
 Run
 ├── Poll
 └── Write
     └── Fibonacci
+
+----
+
+tracer provider ...
+
+./app.go: tracer can be started in each layers with parent context and span name, which generates new context and span
+
+./app.go func (a *App) Poll: span can be associated with some metrics "attribute" (tuple of key and value)
+
+./app.go func (a *App) Write: tracer can start and end span in caller side or callee side see ./app.go
+
+traces.txt: output unit is per span
+
+traces.txt: resource and attribute in span are different. what's diff?
+
+----
+
+
