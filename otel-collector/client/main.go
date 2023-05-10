@@ -25,19 +25,13 @@ import (
 	"os"
 	"time"
 
-	"go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/baggage"
 	"go.opentelemetry.io/otel/exporters/otlp/otlpmetric/otlpmetricgrpc"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace"
-	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/metric/global"
 	"go.opentelemetry.io/otel/metric/instrument"
-	"go.opentelemetry.io/otel/propagation"
 	sdkmetric "go.opentelemetry.io/otel/sdk/metric"
 	"go.opentelemetry.io/otel/sdk/resource"
-	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"google.golang.org/grpc"
 )
@@ -68,6 +62,7 @@ func initProvider() func() {
 		ctx,
 		otlpmetricgrpc.WithInsecure(),
 		otlpmetricgrpc.WithEndpoint(otelAgentAddr),
+		otlpmetricgrpc.WithDialOption(grpc.WithBlock()),
 	)
 	handleErr(err, "Failed to create the collector metric exporter")
 
@@ -82,32 +77,9 @@ func initProvider() func() {
 	)
 	global.SetMeterProvider(meterProvider)
 
-	traceClient := otlptracegrpc.NewClient(
-		otlptracegrpc.WithInsecure(),
-		otlptracegrpc.WithEndpoint(otelAgentAddr),
-		otlptracegrpc.WithDialOption(grpc.WithBlock()))
-	sctx, cancel := context.WithTimeout(ctx, time.Second)
-	defer cancel()
-	traceExp, err := otlptrace.New(sctx, traceClient)
-	handleErr(err, "Failed to create the collector trace exporter")
-
-	bsp := sdktrace.NewBatchSpanProcessor(traceExp)
-	tracerProvider := sdktrace.NewTracerProvider(
-		sdktrace.WithSampler(sdktrace.AlwaysSample()),
-		sdktrace.WithResource(res),
-		sdktrace.WithSpanProcessor(bsp),
-	)
-
-	// set global propagator to tracecontext (the default is no-op).
-	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
-	otel.SetTracerProvider(tracerProvider)
-
 	return func() {
 		cxt, cancel := context.WithTimeout(ctx, time.Second)
 		defer cancel()
-		if err := traceExp.Shutdown(cxt); err != nil {
-			otel.Handle(err)
-		}
 		// pushes any last exports to the receiver
 		if err := meterProvider.Shutdown(cxt); err != nil {
 			otel.Handle(err)
@@ -125,12 +97,7 @@ func main() {
 	shutdown := initProvider()
 	defer shutdown()
 
-	tracer := otel.Tracer("demo-client-tracer")
 	meter := global.Meter("demo-client-meter")
-
-	method, _ := baggage.NewMember("method", "repl")
-	client, _ := baggage.NewMember("client", "cli")
-	bag, _ := baggage.New(method, client)
 
 	// labels represent additional key-value descriptors that can be bound to a
 	// metric observer or recorder.
@@ -163,13 +130,11 @@ func main() {
 		instrument.WithDescription("The counts of the lines in"),
 	)
 
-	defaultCtx := baggage.ContextWithBaggage(context.Background(), bag)
 	rng := rand.New(rand.NewSource(time.Now().UnixNano()))
 	for {
 		startTime := time.Now()
-		ctx, span := tracer.Start(defaultCtx, "ExecuteRequest")
+		ctx := context.Background()
 		makeRequest(ctx)
-		span.End()
 		latencyMs := float64(time.Since(startTime)) / 1e6
 		nr := int(rng.Int31n(7))
 		for i := 0; i < nr; i++ {
@@ -194,11 +159,6 @@ func makeRequest(ctx context.Context) {
 		demoServerAddr = "http://0.0.0.0:7080/hello"
 	}
 
-	// Trace an HTTP client by wrapping the transport
-	client := http.Client{
-		Transport: otelhttp.NewTransport(http.DefaultTransport),
-	}
-
 	// Make sure we pass the context to the request to avoid broken traces.
 	req, err := http.NewRequestWithContext(ctx, "GET", demoServerAddr, nil)
 	if err != nil {
@@ -206,7 +166,7 @@ func makeRequest(ctx context.Context) {
 	}
 
 	// All requests made with this client will create spans.
-	res, err := client.Do(req)
+	res, err := http.DefaultClient.Do(req)
 	if err != nil {
 		panic(err)
 	}

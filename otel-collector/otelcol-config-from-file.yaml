@@ -7,34 +7,15 @@ receivers:
 exporters:
   logging:
 
-  prometheus:
-    endpoint: "0.0.0.0:8889"
-    const_labels:
-      label1: value1
-
-  jaeger:
-    endpoint: jaeger-all-in-one:14250
-    tls:
-      insecure: true
+  prometheusremotewrite:
+    endpoint: "http://prometheus:9090/api/v1/write"
 
 processors:
   batch:
 
-extensions:
-  health_check:
-  pprof:
-    endpoint: :1888
-  zpages:
-    endpoint: :55679
-
 service:
-  extensions: [pprof, zpages, health_check]
   pipelines:
-    traces:
-      receivers: [otlpjsonfile]
-      processors: [batch]
-      exporters: [logging, jaeger]
     metrics:
       receivers: [otlpjsonfile]
       processors: [batch]
-      exporters: [logging, prometheus]
+      exporters: [logging, prometheusremotewrite]

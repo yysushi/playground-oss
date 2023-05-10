@@ -2,4 +2,8 @@
 https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/examples/demo
 
 
-
+docker compose -f docker-compose-demo.yaml up
+docker compose -f docker-compose-demo.yaml down
+docker compose -f docker-compose-demo.yaml rm -f
+date; ls otelcol-output
+docker compose -f docker-compose-visualize.yaml up

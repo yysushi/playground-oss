@@ -1,0 +1,35 @@
+services:
+  # Collector 1
+  otel-collector-1:
+    build:
+      context: .
+    restart: always
+    command: ["--config=/etc/otelcol-config.yaml", "${OTELCOL_ARGS}"]
+    volumes:
+      - ./otelcol-config-to-file.yaml:/etc/otelcol-config.yaml
+      - ./otelcol-output:/output
+    ports:
+      - "4317:4317"   # OTLP gRPC receiver
+
+  demo-client:
+    build:
+      dockerfile: Dockerfile
+      context: ./client
+    restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector-1:4317
+      - DEMO_SERVER_ENDPOINT=http://demo-server:7080/hello
+    depends_on:
+      - demo-server
+ 
+  demo-server:
+    build:
+      dockerfile: Dockerfile
+      context: ./server
+    restart: always
+    environment:
+      - OTEL_EXPORTER_OTLP_ENDPOINT=otel-collector-1:4317
+    ports:
+      - "7080"
+    depends_on:
+      - otel-collector-1
