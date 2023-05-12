@@ -26,7 +26,7 @@ services:
 
   grafana:
     container_name: grafana
-    image: grafana/grafana:latest
+    image: grafana/grafana:9.4.7
     restart: always
     volumes:
       - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
