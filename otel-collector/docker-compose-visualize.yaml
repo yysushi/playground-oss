@@ -8,6 +8,10 @@ services:
     volumes:
       - ./otelcol-config-from-file.yaml:/etc/otelcol-config.yaml
       - ./otelcol-output:/output
+    ports:
+      - "55679:55679"
+      - "13133:13133"
+      - "1777:1777"
     depends_on:
       - prometheus
 

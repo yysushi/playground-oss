@@ -13,7 +13,16 @@ exporters:
 processors:
   batch:
 
+extensions:
+  zpages:
+    endpoint: "0.0.0.0:55679"
+  health_check:
+    endpoint: "0.0.0.0:13133"
+  pprof:
+    endpoint: "0.0.0.0:1777"
+
 service:
+  extensions: [health_check, pprof, zpages]
   pipelines:
     metrics:
       receivers: [otlpjsonfile]
