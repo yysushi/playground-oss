@@ -1,0 +1,8 @@
+docker compose -f compose1.yml -f child/compose2.yml up
+
+1. path
+
+- build context path: relative path of compose file
+- volume path: relative path of project root
+
+2. same network in multiple files

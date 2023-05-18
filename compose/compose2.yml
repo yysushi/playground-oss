@@ -1,0 +1,9 @@
+services:
+  tool-2:
+    build:
+      context: .
+      dockerfile: 2.Dockerfile
+    tty: true
+    command: bash
+    volumes:
+      - ./output:/output

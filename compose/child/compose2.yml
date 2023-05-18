@@ -1,0 +1,7 @@
+services:
+  tool-2:
+    image: nicolaka/netshoot
+    tty: true
+    command: bash
+    volumes:
+      - ./output:/output
