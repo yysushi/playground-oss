@@ -1,0 +1,8 @@
+
+1. docker compose up => profiled services are filtered out
+2. docker compose --profile 2 up => profiled without 2 are filted out but unprofiled services are included
+3. docker compose --profile '*' up => all services including unprofiled are entried
+4. docker compose --profile 2 -f compose.yml -f compose-network.yml up 
+
+docker buildx bake -f compose.yml --print
+

@@ -1,0 +1,7 @@
+services:
+  tool-1:
+    networks:
+      - custom
+
+networks:
+  custom:

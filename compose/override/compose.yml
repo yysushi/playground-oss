@@ -1,0 +1,26 @@
+services:
+  tool-1:
+    image: nicolaka/netshoot:latest
+    tty: true
+    command: bash
+    profiles:
+      - "1"
+    networks:
+      - default
+  tool-2:
+    image: nicolaka/netshoot:latest
+    tty: true
+    command: bash
+    profiles:
+      - "2"
+    networks:
+      - default
+  tool-3:
+    image: nicolaka/netshoot:latest
+    tty: true
+    command: bash
+    networks:
+      - default
+
+networks:
+  default:
