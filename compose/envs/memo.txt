@@ -1,0 +1,20 @@
+
+1. non default compose file can be loaded by setting .env
+
+$ cat .env
+COMPOSE_PROJECT_NAME="some-project"
+COMPOSE_FILE="nondefault-compose.yaml"
+$ docker compose config
+name: some-project
+services:
+  hoge:
+
+2. it can be override by shell variable or environment variable
+
+$ COMPOSE_PROJECT_NAME=changed docker compose config
+name: changed
+..
+$ export COMPOSE_PROJECT_NAME=changed
+$ docker compose config
+name: changed
+..

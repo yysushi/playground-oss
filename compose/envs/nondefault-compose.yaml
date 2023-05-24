@@ -1,0 +1,7 @@
+---
+
+services:
+  hoge:
+    image: gcr.io/distroless/static-debian11:debug-nonroot
+    tty: true
+    entrypoint: ["sh"]
