@@ -1,7 +1,37 @@
+- grafonnet
+
 touch jsonnetfile.json
 vim main.jsonnet
 vim g.libsonnet
 
 jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
 
-jsonnet -J vendor main.jsonnet
+jsonnet -J vendor -o gen/dashboard.json -c main.jsonnet
+
+- graphs
+
+https://prometheus.io/docs/tutorials/understanding_metric_types/
+
+go_gc_duration_seconds_count -> counter
+
+go_memstats_heap_alloc_bytes -> gauge
+
+prometheus_http_request_duration_seconds_bucket -> histogram
+
+- grafana
+
+LIMA_IP=$(lima ip a show lima0 | grep 'inet '| awk '{print $2}' | cut -f1 -d"/")
+
+docker run -p 9090:9090 \
+  prom/prometheus 
+
+docker run \
+  -e GF_AUTH_ANONYMOUS_ENABLED=true \
+  -e GF_AUTH_ANONYMOUS_ORG_ROLE=Admin \
+  -e GF_AUTH_DISABLE_LOGIN_FORM=true \
+  -e LIMA_IP=${LIMA_IP} \
+  -v $(pwd)/grafana/provisioning:/etc/grafana/provisioning \
+  -v $(pwd)/gen:/generated-dashboards \
+  -p 3000:3000 \
+  grafana/grafana
+

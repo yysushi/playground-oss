@@ -1,18 +1,33 @@
 local g = import 'g.libsonnet';
 
-g.dashboard.new('Faro dashboard')
-+ g.dashboard.withUid('faro-grafonnet-demo')
-+ g.dashboard.withDescription('Dashboard for Faro')
-+ g.dashboard.graphTooltip.withSharedCrosshair()
+g.dashboard.new('A title of dashboard')
 + g.dashboard.withPanels([
-  g.panel.timeSeries.new('Requests / sec')
+  g.panel.timeSeries.new('A title of panel')
   + g.panel.timeSeries.queryOptions.withTargets([
     g.query.prometheus.new(
-      'mimir',
-      'sum by (status_code) (rate(request_duration_seconds_count{job=~".*/faro-api"}[$__rate_interval]))',
+      'Prometheus',
+      'go_memstats_heap_alloc_bytes',
     ),
-  ])
-  + g.panel.timeSeries.standardOptions.withUnit('reqps')
-  + g.panel.timeSeries.gridPos.withW(24)
-  + g.panel.timeSeries.gridPos.withH(8),
+  ]),
+  g.panel.timeSeries.new('A title of panel')
+  + g.panel.timeSeries.queryOptions.withTargets([
+    g.query.prometheus.new(
+      'Prometheus',
+      'go_gc_duration_seconds_count',
+    ),
+  ]),
+  g.panel.timeSeries.new('A title of panel')
+  + g.panel.timeSeries.queryOptions.withTargets([
+    g.query.prometheus.new(
+      'Prometheus',
+      'prometheus_http_request_duration_seconds_bucket{handler="/graph"}',
+    ),
+  ]),
+  g.panel.timeSeries.new('A title of panel')
+  + g.panel.timeSeries.queryOptions.withTargets([
+    g.query.prometheus.new(
+      'Prometheus',
+      'histogram_quantile(0.9, rate(prometheus_http_request_duration_seconds_bucket{handler="/graph"}[5m]))',
+    ),
+  ]),
 ])

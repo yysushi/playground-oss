@@ -1,0 +1,83 @@
+{
+   "panels": [
+      {
+         "datasource": {
+            "type": "datasource",
+            "uid": "-- Mixed --"
+         },
+         "id": 1,
+         "targets": [
+            {
+               "datasource": {
+                  "type": "prometheus",
+                  "uid": "Prometheus"
+               },
+               "expr": "go_memstats_heap_alloc_bytes"
+            }
+         ],
+         "title": "A title of panel",
+         "type": "timeseries"
+      },
+      {
+         "datasource": {
+            "type": "datasource",
+            "uid": "-- Mixed --"
+         },
+         "id": 2,
+         "targets": [
+            {
+               "datasource": {
+                  "type": "prometheus",
+                  "uid": "Prometheus"
+               },
+               "expr": "go_gc_duration_seconds_count"
+            }
+         ],
+         "title": "A title of panel",
+         "type": "timeseries"
+      },
+      {
+         "datasource": {
+            "type": "datasource",
+            "uid": "-- Mixed --"
+         },
+         "id": 3,
+         "targets": [
+            {
+               "datasource": {
+                  "type": "prometheus",
+                  "uid": "Prometheus"
+               },
+               "expr": "prometheus_http_request_duration_seconds_bucket{handler=\"/graph\"}"
+            }
+         ],
+         "title": "A title of panel",
+         "type": "timeseries"
+      },
+      {
+         "datasource": {
+            "type": "datasource",
+            "uid": "-- Mixed --"
+         },
+         "id": 4,
+         "targets": [
+            {
+               "datasource": {
+                  "type": "prometheus",
+                  "uid": "Prometheus"
+               },
+               "expr": "histogram_quantile(0.9, rate(prometheus_http_request_duration_seconds_bucket{handler=\"/graph\"}[5m]))"
+            }
+         ],
+         "title": "A title of panel",
+         "type": "timeseries"
+      }
+   ],
+   "schemaVersion": 36,
+   "time": {
+      "from": "now-6h",
+      "to": "now"
+   },
+   "timezone": "utc",
+   "title": "A title of dashboard"
+}
