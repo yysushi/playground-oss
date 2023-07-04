@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "dependencies": [
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/crdsonnet/crdsonnet.git",
+          "subdir": "crdsonnet"
+        }
+      },
+      "version": "af14e3b8e958e1e4155d67689bd9d38cb7169698",
+      "sum": "HH+GjMwZCo65Q4SBG2M2Ezz+RekZmc783vZsXvVyPOA="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/grafonnet.git",
+          "subdir": "gen/grafonnet-latest"
+        }
+      },
+      "version": "441b95e5a16ee5e511d54beb5f07e9b05f2bb5a2",
+      "sum": "sVzVlSLbxPkAurwO19YERigLMmRfVsViMcWC0gkTTqU="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/grafonnet.git",
+          "subdir": "gen/grafonnet-v10.0.0"
+        }
+      },
+      "version": "441b95e5a16ee5e511d54beb5f07e9b05f2bb5a2",
+      "sum": "Lv5DM6d93sW3q2v9l5A6V0Etnnrzy5t19uYTEjO77Ag="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/grafonnet.git",
+          "subdir": "grafonnet-base"
+        }
+      },
+      "version": "441b95e5a16ee5e511d54beb5f07e9b05f2bb5a2",
+      "sum": "5zmj5Vn/cKhKrD+jA5BfLliR4t74upkM4PfnuJC5t4M="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/grafana/grok.git",
+          "subdir": "jsonnet/v10.0.0"
+        }
+      },
+      "version": "5ff7cfd1f478de867a25c62a7a0106ce27a72a97",
+      "sum": "cpxEEjeaQMUYA938vuVie3s5SSRv+O9IWwL9F1m44Qk="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jsonnet-libs/docsonnet.git",
+          "subdir": "doc-util"
+        }
+      },
+      "version": "7c865ec0606f2b68c0f6b2721f101e6a99cd2593",
+      "sum": "zjjufxN4yAIevldYEERiZEp27vK0BJKj1VvZcVtWiOo="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jsonnet-libs/xtd.git",
+          "subdir": ""
+        }
+      },
+      "version": "d1929c3c1728274424a21a617f1b82095685d640",
+      "sum": "DHqlMNfQH/eCWHbHD2Ouc/bH00AwTkCS86z6cgzQ7UI="
+    }
+  ],
+  "legacyImports": false
+}

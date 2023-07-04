@@ -1,0 +1,7 @@
+touch jsonnetfile.json
+vim main.jsonnet
+vim g.libsonnet
+
+jb install github.com/grafana/grafonnet/gen/grafonnet-latest@main
+
+jsonnet -J vendor main.jsonnet
