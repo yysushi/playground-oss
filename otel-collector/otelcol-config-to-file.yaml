@@ -7,14 +7,11 @@ exporters:
   logging:
 
   file:
-    path: /output/data.json
-
-processors:
-  batch:
+    path: /output/data.txt
 
 service:
   pipelines:
     metrics:
       receivers: [otlp]
-      processors: [batch]
+      processors: []
       exporters: [logging, file]

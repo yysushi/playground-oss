@@ -1,8 +1,6 @@
 receivers:
-  otlpjsonfile:
-    include:
-      - /output/data.json
-    start_at:  beginning
+  file:
+    path: /output/data.txt
 
 exporters:
   logging:
@@ -10,12 +8,9 @@ exporters:
   prometheusremotewrite:
     endpoint: "http://prometheus:9090/api/v1/write"
 
-processors:
-  batch:
-
 service:
   pipelines:
     metrics:
-      receivers: [otlpjsonfile]
-      processors: [batch]
+      receivers: [file]
+      processors: []
       exporters: [logging, prometheusremotewrite]
