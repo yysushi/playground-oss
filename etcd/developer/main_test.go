@@ -10,7 +10,7 @@ import (
 	"github.com/ory/dockertest"
 	"github.com/ory/dockertest/docker"
 	"github.com/stretchr/testify/assert"
-	etcd "go.etcd.io/etcd/clientv3"
+	etcd "go.etcd.io/etcd/client/v3"
 	"google.golang.org/grpc"
 )
 
@@ -21,7 +21,7 @@ func newEnv() (*dockertest.Pool, *dockertest.Resource) {
 	}
 	options := &dockertest.RunOptions{
 		Repository: "quay.io/coreos/etcd",
-		Tag:        "v3.4.13",
+		Tag:        "v3.5.9",
 		PortBindings: map[docker.Port][]docker.PortBinding{
 			"2379/tcp": []docker.PortBinding{{HostPort: "2379"}},
 		},
@@ -59,7 +59,7 @@ func TestConnection(t *testing.T) {
 	defer cli.Close()
 	// then
 	connInfo := cli.ActiveConnection().Target()
-	rx := regexp.MustCompile("endpoint://client-[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[8|9|a|b][a-f0-9]{3}-[a-f0-9]{12}/localhost:2379")
+	rx := regexp.MustCompile("etcd-endpoints://0x[a-f0-9]{10}/localhost:2379")
 	assert.Regexp(t, rx, connInfo)
 }
 
