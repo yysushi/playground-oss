@@ -1,0 +1,40 @@
+
+
+create table staff(id integer, name text, deptid integer);
+create table dept(id integer, name text);
+
+insert into staff (id,name,deptid) values (1,"hoge",2);
+insert into staff (id,name,deptid) values (2,"fuga",3);
+insert into staff (id,name,deptid) values (3,"piyo",1);
+
+insert into dept (id,name) values (1,"foo");
+insert into dept (id,name) values (2,"bar");
+
+- left outer join
+
+select * from staff left outer join dept on staff.deptid = dept.id;
+1|hoge|2|2|bar
+2|fuga|3||
+3|piyo|1|1|foo
+
+select * from dept left outer join staff on staff.deptid = dept.id;
+1|foo|3|piyo|1
+2|bar|1|hoge|2
+
+- inner join
+
+select * from staff inner join dept on staff.deptid = dept.id;
+1|hoge|2|2|bar
+3|piyo|1|1|foo
+
+- right outer join
+
+select * from staff right outer join dept on staff.deptid = dept.id;
+1|hoge|2|2|bar
+3|piyo|1|1|foo
+
+- natural join
+
+select * from dept natural left outer join staff;
+1|foo|
+2|bar|
