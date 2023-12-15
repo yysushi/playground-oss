@@ -1,3 +1,7 @@
 
 docker compose up
 
+docker run --rm -p 8085:8085 google/cloud-sdk:emulators gcloud beta emulators pubsub start --host-port 0.0.0.0:8085
+
+PUBSUB_EMULATOR_HOST=:8085 go test -v ./...
+

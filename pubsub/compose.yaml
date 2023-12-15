@@ -3,16 +3,12 @@
 services:
   pubsub:
     image: google/cloud-sdk:emulators
-    command: ["gcloud", "beta", "emulators", "pubsub", "start"]
-    ports:
-      - 8085:8085
+    command: ["gcloud", "beta", "emulators", "pubsub", "start", "--host-port", "0.0.0.0:8085"]
   go:
     image: golang:1.20
     working_dir: /app
     volumes:
       - .:/app
     command: ["go", "test", "-v", "./..."]
-    depends_on:
-      - pubsub
     environment:
       PUBSUB_EMULATOR_HOST: "pubsub:8085"
