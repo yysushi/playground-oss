@@ -1,0 +1,59 @@
+
+- create schema
+
+sqlite3 hoge.db < ./hoge.sql
+
+- run sqlite3 with a db
+
+sqlite3 hoge.db
+
+- list up tables
+
+.tables
+
+- list up records in a table
+
+select * from hoge;
+
+- insert a record
+
+insert into hoge (id,name,version) values ("1","fuga",1);
+
+- conditoinal update and check the affected rows
+
+update hoge set name = "fuga-updated1" where id="1" and version = 1;
+select changes();
+
+update hoge set name = "fuga-updated2" where id="1" and version = 2;
+select changes();
+
+- multiple `select chagnes();`s are separated per client
+
+-- client1: step 0
+insert into hoge (id,name,version) values ("2","piyo",1);
+-- client1: step 1
+-- 1
+select changes();
+
+-- client2: step 2
+-- 0
+select changes(); -- client2: 1
+
+- begin a transaction and rollback the change
+
+BEGIN TRANSACTION tx1;
+insert into hoge (id,name,version) values ("2","piyo",1);
+ROLLBACK TRANSACTION tx1;
+
+- 
+
+BEGIN TRANSACTION tx1;
+update hoge set name = "fuga" where version = 1;
+COMMIT TRANSACTION tx1;
+
+
+
+
+
+
+
