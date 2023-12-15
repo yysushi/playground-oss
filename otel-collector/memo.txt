@@ -7,3 +7,91 @@ docker compose -f docker-compose-demo.yaml down
 docker compose -f docker-compose-demo.yaml rm -f
 date; ls otelcol-output
 docker compose -f docker-compose-visualize.yaml up
+
+
+-------
+
+- providers
+  - (some signal) -> (some provider)
+  - metrics -> meter provider
+  - trace -> tracer provider
+  - logs -> text map propagator
+
+- (metrics) how to init provider
+  - create a context
+  - create a resource with the context
+  - create an exporter with the context
+  - create a provider with the resource and exporter
+  - register the provider globally
+  - create shudown func
+
+- (metrics) how to define metrics
+  - declare meter globally
+  - add or record a value on the meter with some attributes
+
+- (metrics) relationship
+  - meter provider
+    - resource
+    - metric exporter
+
+- (trace) how to init provider
+  - create exporter
+  - create resource
+  - create tracer provider
+  - register the provider globally
+
+- (trace) how to define spans
+  - declare tracer globally
+    - "name" would be function
+  - start a span from the tracer with a context
+    - if a span context used, it believes as if it is parent
+  - associate attributes with the span
+  - end the span
+
+- data
+  - tracesdata
+    - resourcespans
+      - resource
+      - scopespans
+        - scope
+        - spans
+	  - trace_id
+	  - span_id
+	  - trace_state
+	  - parent_span_id
+	  - name
+	  - kind
+	    - internal
+	    - server
+	    - client
+	    - consumer
+	    - provider
+	  - start
+	  - end
+	  - attributes
+	  - events
+	    - time
+	    - name
+	    - attributes
+	  - links
+	  - status
+  - metricsdata
+    - resourcemetrics
+      - resource
+      - scopemetrics
+        - scope
+	- metrics
+	  - name
+	  - unit
+	  - data
+	    - gauge
+	      - numberdatapoints
+	        - attributes
+		- start
+		- time
+		- value
+		- exemplar
+	    - sum
+	      - numberdatapoints
+	      - aggregationtemporality
+	    - histogram
