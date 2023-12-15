@@ -33,6 +33,8 @@ select * from staff right outer join dept on staff.deptid = dept.id;
 1|hoge|2|2|bar
 3|piyo|1|1|foo
 
+select * from staff right outer join dept on staff.deptid = dept.id order by staff.deptid;
+
 - natural join
 
 select * from dept natural left outer join staff;
