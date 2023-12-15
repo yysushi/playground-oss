@@ -70,7 +70,7 @@ func TestGet(t *testing.T) {
 	defer pool.Purge(resource)
 	cli := newClient()
 	defer cli.Close()
-	defer cli.Delete(ctx, "", etcd.WithPrefix())
+	defer cli.Delete(ctx, "/")
 	// given
 	cli.Put(ctx, "/key", "value")
 	// when
@@ -79,7 +79,6 @@ func TestGet(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Failed to get: %s", err)
 	}
-	for _, ev := range resp.Kvs {
-		fmt.Printf("%s\n", ev.Key)
-	}
+	assert.Len(t, resp.Kvs, 1)
+	assert.Equal(t, "value", string(resp.Kvs[0].Value))
 }
