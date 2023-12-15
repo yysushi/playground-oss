@@ -1,0 +1,22 @@
+
+- autoincrement
+sqlite3 hoge.db < ./hoge.sql
+sqlite3 hoge.db
+insert into hoge (name,version) values ("fuga",1);
+insert into hoge (name,version) values ("fuga",1);
+select * from hoge;
+delete from hoge where id=1;
+select * from hoge;
+insert into hoge (name,version) values ("fuga",1);
+select * from hoge;
+
+- autoincrement can't be reset if any record exists
+delete from sqlite_sequence where name = 'hoge';
+insert into hoge (name,version) values ("fuga",1);
+select * from hoge;
+
+- autoincrement can be reset if any record exists
+delete from hoge;
+delete from sqlite_sequence where name = 'hoge';
+insert into hoge (name,version) values ("fuga",1);
+select * from hoge;
