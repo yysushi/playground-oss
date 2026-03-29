@@ -1,0 +1,51 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: eg
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: eg
+  namespace: default
+spec:
+  gatewayClassName: eg
+  listeners:
+  - name: https
+    protocol: HTTPS
+    port: 443
+    tls:
+      certificateRefs:
+      - name: eg-tls
+---
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: SecurityPolicy
+metadata:
+  name: oidc-example
+  namespace: default
+spec:
+  targetRefs:
+  - group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: myapp
+  oidc:
+    provider:
+      issuer: "$ISSUER"
+      tokenEndpoint: "$ISSUER/token"
+    clientID: "$CLIENT_ID"
+    clientSecret:
+      name: mockoidc-secret
+    redirectURL: "https://localhost:8443/myapp/oauth2/callback"
+    logoutPath: "/myapp/logout"
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mockoidc-secret
+  namespace: default
+type: Opaque
+data:
+  client-secret: "$CLIENT_SECRET_BASE64_ENCODED"

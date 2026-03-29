@@ -1,0 +1,34 @@
+https://gateway.envoyproxy.io/docs/tasks/security/oidc/#create-a-securitypolicy-1
+
+* kind
+
+kind create cluster
+kubectl cluster-info --context kind-kind
+
+* envoy-gateway
+
+helm install eg oci://docker.io/envoyproxy/gateway-helm --version v1.6.3 -n envoy-gateway-system --create-namespace
+
+helm list -n envoy-gateway-system
+
+*
+
+go run ./main.go
+
+export ISSUER="http://127.0.0.1:63668/oidc"
+export CLIENT_ID="eAiEfRFuOGkD1FJYCh84M8DUWyuNxZwM"
+export CLIENT_SECRET_BASE64_ENCODED=$(base64 <<< "8osdvWVOmCX8o397lcgw80kSwe38jSWK")
+
+envsubst < oidc.yaml | kubectl apply -f -
+
+
+mockoidc
+
+- /.well-known/openid-configuration
+- Authorization endpoint
+- Token endpoint
+- Userinfo endpoint
+- JWKS endpoint
+
+
+
