@@ -1,2 +1,12 @@
+# Development files
 .direnv
+.envrc
+shell.nix
+
+# Runtime files
 kubeconfig
+memo.txt
+*.log
+*.tmp
+.env
+.pf.pid

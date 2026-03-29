@@ -56,11 +56,11 @@ echo ""
 # Step 2: Build and Deploy Mock OIDC Server and Echo Backend
 echo "Step 2/6: Building and deploying Mock OIDC Server and Echo Backend..."
 echo "  → Building mockoidc Docker image..."
-docker build -t mockoidc:latest . >/dev/null 2>&1
+docker build -t mockoidc:latest oidc-server/ >/dev/null 2>&1
 echo "  → Loading image into KIND cluster..."
 kind load docker-image mockoidc:latest >/dev/null 2>&1
 echo "  → Deploying to Kubernetes..."
-kubectl apply -f manifests.yaml
+kubectl apply -f k8s/manifests.yaml
 echo "  → Waiting for deployments to be ready..."
 kubectl rollout status deployment/mockoidc -n default --timeout=5m
 kubectl rollout status deployment/echo -n default --timeout=5m
@@ -110,7 +110,7 @@ kubectl -n default create secret tls eg-tls \
 	--cert "$TMP_CERT_DIR/tls.crt" \
 	--dry-run=client -o yaml | kubectl apply -f -
 rm -rf "$TMP_CERT_DIR"
-envsubst <oidc.yaml | kubectl apply -f -
+envsubst <k8s/oidc.yaml | kubectl apply -f -
 sleep 3 # Wait for policy to be processed
 echo "✓ OIDC SecurityPolicy applied"
 echo ""
@@ -198,18 +198,23 @@ echo ""
 echo "1. Start port-forwards in two separate terminals:"
 echo ""
 echo "   Terminal 1:"
-echo "   $ kubectl -n envoy-gateway-system port-forward service/envoy-default-eg-e41e7b31 8443:443"
+GATEWAY_SVC=\$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-name=eg -o jsonpath='{.items[0].metadata.name}')
+echo "   $ kubectl -n envoy-gateway-system port-forward service/$GATEWAY_SVC 8443:443"
 echo ""
 echo "   Terminal 2:"
 echo "   $ kubectl -n default port-forward service/mockoidc 8888:8888"
 echo ""
-echo "2. Test with curl:"
-echo "   $ curl -vk https://localhost:8443/myapp 2>&1 | grep -i location"
+echo "2. Test OIDC flow:"
+echo "   $ ./scripts/test.sh"
 echo ""
-echo "3. Test with Firefox:"
-echo "   Navigate to: https://localhost:8443/myapp"
-echo "   (You'll need to accept the self-signed certificate warning)"
+echo "3. Test in browser:"
+echo "   Open: https://localhost:8443/myapp"
+echo "   (Accept the self-signed certificate warning)"
+echo "   Login with any username/password"
 echo ""
-echo "4. To cleanup:"
-echo "   $ ./cleanup.sh"
+echo "4. Cleanup:"
+echo "   $ ./scripts/cleanup.sh"
+echo ""
+echo "📖 See SUMMARY.md for architecture details"
+echo "📖 See STATUS.md for configuration details"
 echo ""
