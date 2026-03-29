@@ -1,0 +1,7 @@
+# Runtime files
+.env
+.pf.pid
+
+# Temporary files
+*.log
+*.tmp
