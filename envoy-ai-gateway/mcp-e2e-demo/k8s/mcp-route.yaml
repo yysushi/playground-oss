@@ -1,0 +1,31 @@
+---
+apiVersion: aigateway.envoyproxy.io/v1alpha1
+kind: MCPRoute
+metadata:
+  name: mcp-route
+  namespace: default
+spec:
+  parentRefs:
+    - name: aigw-run
+      kind: Gateway
+      group: gateway.networking.k8s.io
+  path: "/mcp"
+  backendRefs:
+    - name: mcp-backend
+      kind: Backend
+      group: gateway.envoyproxy.io
+      path: "/mcp"
+  securityPolicy:
+    oauth:
+      issuer: "http://oauth.default.svc.cluster.local:8080/oidc"
+      jwks:
+        localJWKS:
+          type: ValueRef
+          valueRef:
+            group: ""
+            kind: ConfigMap
+            name: jwks-configmap
+      protectedResourceMetadata:
+        resource: "http://localhost:8080/mcp"
+        scopesSupported:
+          - "openid"

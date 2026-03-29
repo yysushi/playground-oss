@@ -1,92 +1,58 @@
 package main
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+
+	"github.com/modelcontextprotocol/go-sdk/mcp"
 )
 
-type Request struct {
-	JSONRPC string          `json:"jsonrpc"`
-	Method  string          `json:"method"`
-	Params  json.RawMessage `json:"params,omitempty"`
-	ID      interface{}     `json:"id,omitempty"`
+type EchoParams struct {
+	Text string `json:"text" jsonschema:"Text to echo back"`
 }
 
-type Response struct {
-	JSONRPC string      `json:"jsonrpc"`
-	Result  interface{} `json:"result,omitempty"`
-	ID      interface{} `json:"id,omitempty"`
+type SumParams struct {
+	A float64 `json:"a" jsonschema:"First number"`
+	B float64 `json:"b" jsonschema:"Second number"`
 }
 
 func main() {
-	http.HandleFunc("/mcp", func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("%s %s", r.Method, r.URL.Path)
+	server := mcp.NewServer(&mcp.Implementation{
+		Name:    "simple-mcp",
+		Version: "1.0.0",
+	}, nil)
 
-		var req Request
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-			http.Error(w, err.Error(), 400)
-			return
-		}
-
-		var result interface{}
-		switch req.Method {
-		case "initialize":
-			result = map[string]interface{}{
-				"protocolVersion": "2024-11-05",
-				"capabilities":    map[string]interface{}{"tools": map[string]interface{}{}},
-				"serverInfo":      map[string]interface{}{"name": "simple-mcp", "version": "1.0.0"},
-			}
-		case "tools/list":
-			result = map[string]interface{}{
-				"tools": []map[string]interface{}{
-					{
-						"name":        "echo",
-						"description": "Echo text",
-						"inputSchema": map[string]interface{}{
-							"type":       "object",
-							"properties": map[string]interface{}{"text": map[string]string{"type": "string"}},
-							"required":   []string{"text"},
-						},
-					},
-					{
-						"name":        "sum",
-						"description": "Add two numbers",
-						"inputSchema": map[string]interface{}{
-							"type": "object",
-							"properties": map[string]interface{}{
-								"a": map[string]string{"type": "number"},
-								"b": map[string]string{"type": "number"},
-							},
-							"required": []string{"a", "b"},
-						},
-					},
-				},
-			}
-		case "tools/call":
-			var params struct {
-				Name      string                 `json:"name"`
-				Arguments map[string]interface{} `json:"arguments"`
-			}
-			json.Unmarshal(req.Params, &params)
-
-			if params.Name == "echo" {
-				result = map[string]interface{}{
-					"content": []map[string]string{{"type": "text", "text": params.Arguments["text"].(string)}},
-				}
-			} else if params.Name == "sum" {
-				sum := params.Arguments["a"].(float64) + params.Arguments["b"].(float64)
-				result = map[string]interface{}{
-					"content": []map[string]string{{"type": "text", "text": fmt.Sprintf("%.0f", sum)}},
-				}
-			}
-		}
-
-		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(Response{JSONRPC: "2.0", Result: result, ID: req.ID})
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "echo",
+		Description: "Echo text",
+	}, func(ctx context.Context, req *mcp.CallToolRequest, params *EchoParams) (*mcp.CallToolResult, any, error) {
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: params.Text},
+			},
+		}, nil, nil
 	})
 
+	mcp.AddTool(server, &mcp.Tool{
+		Name:        "sum",
+		Description: "Add two numbers",
+	}, func(ctx context.Context, req *mcp.CallToolRequest, params *SumParams) (*mcp.CallToolResult, any, error) {
+		result := params.A + params.B
+		return &mcp.CallToolResult{
+			Content: []mcp.Content{
+				&mcp.TextContent{Text: fmt.Sprintf("%.0f", result)},
+			},
+		}, nil, nil
+	})
+
+	handler := mcp.NewStreamableHTTPHandler(func(req *http.Request) *mcp.Server {
+		return server
+	}, nil)
+
 	log.Println("MCP Server listening on :8080")
-	http.ListenAndServe(":8080", nil)
+	if err := http.ListenAndServe(":8080", handler); err != nil {
+		log.Fatalf("Server failed: %v", err)
+	}
 }

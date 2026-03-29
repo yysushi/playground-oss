@@ -1,8 +1,8 @@
-# MCP E2E Demo - Summary
+# MCP OAuth E2E Demo - Summary
 
 ## ✅ What We Built (Working!)
 
-A minimal MCP server accessible through Envoy AI Gateway on KIND cluster.
+A minimal MCP server accessible through Envoy AI Gateway with OAuth-protected MCPRoute on a KIND cluster.
 
 ### Test Results
 
@@ -11,23 +11,39 @@ $ ./scripts/test-working.sh
 
 === Testing MCP through Envoy Gateway ===
 
-1. List available tools:
-{
-  "name": "echo",
-  "description": "Echo text"
-}
-{
-  "name": "sum",
-  "description": "Add two numbers"
-}
+1. List available tools (should be 401 without token):
+HTTP/1.1 401 Unauthorized
 
-2. Test echo tool:
-"Hello from Envoy AI Gateway!"
+2. Verify OAuth protected resource metadata endpoint:
+HTTP/1.1 200 OK
 
-3. Test sum tool (42 + 58):
-"100"
+3. Fetch authorization server metadata:
+HTTP/1.1 200 OK
 
-✓ All tests passed!
+✓ OAuth is enforced (401 without token) and metadata endpoints are wired
+
+```bash
+$ ./scripts/test-token.sh
+
+=== Testing MCP with Real mockoidc Token ===
+
+1. Port-forwarding mockoidc...
+2. Requesting token via auth code + PKCE...
+3. Initialize MCP session...
+4. List tools with session:
+event: message
+data: {"jsonrpc":"2.0","id":2,"result":{"tools":[...]}}
+
+5. Call echo tool:
+event: message
+data: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"hello"}]}}
+
+6. Call sum tool:
+event: message
+data: {"jsonrpc":"2.0","id":4,"result":{"content":[{"type":"text","text":"100"}]}}
+
+✓ Real token flow works (session + tool calls)
+```
 ```
 
 ## Architecture
@@ -41,13 +57,14 @@ $ ./scripts/test-working.sh
 ┌────────────────────────┐
 │  Envoy AI Gateway      │
 │  (on KIND cluster)     │
-│  - HTTPRoute /mcp      │
+│  - MCPRoute /mcp       │
 │  - Port 8080           │
 └────────┬───────────────┘
          │
          ▼
 ┌─────────────────┐
 │   MCP Server    │
+│ (streamable HTTP)│
 │   - echo tool   │
 │   - sum tool    │
 └─────────────────┘
@@ -55,61 +72,40 @@ $ ./scripts/test-working.sh
 
 ## Components Built
 
-### 1. MCP Server (`mcp-server/main.go` - 70 lines)
-- Implements MCP JSON-RPC protocol
+### 1. MCP Server (`mcp-server/main.go`)
+- Streamable HTTP MCP server using `github.com/modelcontextprotocol/go-sdk/mcp`
 - Two tools: `echo` and `sum`
-- Simple, readable Go code
+- Built-in session handling
 
 ### 2. OAuth Server (`oauth-server/main.go`)
 - mockoidc for free OAuth provider
 - Generates CLIENT_ID/SECRET
-- Ready for OAuth integration (needs SecurityPolicy config)
 
 ### 3. Kubernetes Resources
 ```
 ✅ KIND cluster
-✅ Envoy Gateway (v1.2.1)
+✅ Envoy Gateway (v1.6.3)
 ✅ AI Gateway CRDs (v0.0.0-latest)
-✅ Gateway + GatewayClass
-✅ HTTPRoute (working)
+✅ GatewayClass + Gateway + EnvoyProxy
+✅ MCPRoute with OAuth
+✅ JWKS ConfigMap
 ✅ Deployments + Services
 ```
 
 ### 4. Scripts
 - `setup.sh` - Automated cluster creation + deployment
-- `test-working.sh` - MCP protocol tests
+- `test-working.sh` - OAuth metadata checks
+- `test-token.sh` - Real token flow (auth code + PKCE)
 - `cleanup.sh` - Full teardown
 
 ## Key Learnings
 
 ### What Works
 
-**HTTPRoute** for MCP proxying works perfectly:
-```yaml
-apiVersion: gateway.networking.k8s.io/v1
-kind: HTTPRoute
-metadata:
-  name: mcp-http-route
-spec:
-  parentRefs:
-  - name: mcp-gateway
-  rules:
-  - matches:
-    - path:
-        type: PathPrefix
-        value: /mcp
-    backendRefs:
-    - name: mcp
-      port: 80
-```
-
-### What Needs More Work
-
-**MCPRoute** requires MCP proxy sidecar configuration:
-- AI Gateway controller creates Backend pointing to `192.0.2.42:9856`
-- This expects an MCP proxy sidecar in gateway pods
-- Sidecar injection mechanism needs additional configuration
-- See `STATUS.md` for details
+**MCPRoute + OAuth** works when:
+- Envoy Gateway >= 1.5.0
+- AI Gateway Envoy Gateway values applied
+- Backend uses streamable HTTP (go-sdk)
 
 ## Files
 
@@ -117,7 +113,8 @@ spec:
 |------|---------|--------|
 | `mcp-server/main.go` | MCP protocol implementation | ✅ Working |
 | `oauth-server/main.go` | OAuth provider | ✅ Working |
-| `k8s/all.yaml` | K8s resources | ✅ Working (with HTTPRoute) |
+| `k8s/all.yaml` | K8s resources | ✅ Working (GatewayClass + EnvoyProxy) |
+| `k8s/mcp-route.yaml` | MCPRoute + OAuth | ✅ Working |
 | `scripts/setup.sh` | Automated deployment | ✅ Working |
 | `scripts/test-working.sh` | MCP tests | ✅ Working |
 | `scripts/cleanup.sh` | Teardown | ✅ Working |
@@ -127,22 +124,15 @@ spec:
 ## Next Steps
 
 ### Option 1: Production Ready (Current Approach)
-- ✅ HTTPRoute works now
-- Add SecurityPolicy for OAuth
+- ✅ MCPRoute + OAuth works now
 - Add rate limiting
 - Add observability (traces/metrics)
 
-### Option 2: Use MCPRoute (Future)
-- Research MCP proxy sidecar injection
-- Check AI Gateway examples/issues
-- May need community support
-- Enables MCP-specific features (tool filtering, server multiplexing)
-
 ## Success Metrics
 
-✅ MCP server responds through gateway  
-✅ All tools (echo, sum) working
-✅ JSON-RPC protocol correct  
+✅ MCPRoute enforces OAuth (401 without token)  
+✅ OAuth metadata endpoints return 200  
+✅ Streamable MCP session works with valid JWT  
 ✅ One-command setup  
 ✅ Clean codebase (<200 lines total)  
 ✅ Free components (no paid services)  
@@ -151,10 +141,8 @@ spec:
 ## Demo Value
 
 This demo successfully shows:
-1. ✅ How to build a minimal MCP server (70 lines of Go)
+1. ✅ How to build a streamable MCP server with go-sdk
 2. ✅ How to deploy Envoy AI Gateway on KIND
-3. ✅ How HTTPRoute proxies MCP protocol
-4. ✅ How to structure a clean demo (automated scripts)
-5. ✅ Real working e2e flow (not just theory)
-
-The MCPRoute integration remains as **documented future work** (STATUS.md) since it requires more complex sidecar configuration that's still evolving in the AI Gateway project.
+3. ✅ How MCPRoute enforces OAuth for MCP backends
+4. ✅ How to wire OAuth metadata endpoints
+5. ✅ End-to-end OAuth + MCP session flow

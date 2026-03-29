@@ -1,7 +1,7 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.23-alpine AS builder
 WORKDIR /app
-COPY main.go .
-RUN go mod init mcp && go build -o server main.go
+COPY go.mod go.sum main.go ./
+RUN go mod download && go build -o server main.go
 
 FROM alpine
 COPY --from=builder /app/server /server

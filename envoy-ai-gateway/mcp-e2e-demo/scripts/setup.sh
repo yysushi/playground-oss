@@ -11,10 +11,12 @@ fi
 
 # 2. Install Envoy Gateway
 echo "2. Installing Envoy Gateway..."
+ENVOY_GATEWAY_VERSION=${ENVOY_GATEWAY_VERSION:-v1.6.3}
 helm upgrade --install eg oci://docker.io/envoyproxy/gateway-helm \
-	--version v1.2.1 \
+	--version "$ENVOY_GATEWAY_VERSION" \
 	--namespace envoy-gateway-system \
 	--create-namespace \
+	-f k8s/envoy-gateway-values.yaml \
 	--wait
 
 # 2a. Install AI Gateway CRDs
@@ -39,35 +41,44 @@ docker build -t oauth:local oauth-server/
 kind load docker-image mcp:local --name mcp-demo
 kind load docker-image oauth:local --name mcp-demo
 
-# 4. Create GatewayClass
-echo "4. Creating GatewayClass..."
-kubectl apply -f - <<EOF
-apiVersion: gateway.networking.k8s.io/v1
-kind: GatewayClass
-metadata:
-  name: eg
-spec:
-  controllerName: gateway.envoyproxy.io/gatewayclass-controller
-EOF
-
-# 5. Deploy
-echo "5. Deploying services..."
+# 4. Deploy base services
+echo "4. Deploying base services..."
 kubectl apply -f k8s/all.yaml
 kubectl wait --for=condition=available --timeout=300s deployment/mcp deployment/oauth
 
-# 6. Get OAuth credentials
-echo "6. Getting OAuth credentials..."
+# 6. Create JWKS ConfigMap for MCP OAuth
+echo "6. Creating JWKS ConfigMap..."
+kubectl port-forward service/oauth 8081:8080 >/tmp/pf-oauth.log 2>&1 &
+OAUTH_PF_PID=$!
+sleep 2
+JWKS=$(curl -fsS http://localhost:8081/oidc/.well-known/jwks.json || true)
+kill $OAUTH_PF_PID >/dev/null 2>&1 || true
+if [ -z "$JWKS" ]; then
+	echo "Error: Failed to fetch JWKS from oauth service" >&2
+	cat /tmp/pf-oauth.log >&2 || true
+	exit 1
+fi
+kubectl create configmap jwks-configmap \
+	--from-literal=jwks="$JWKS" \
+	--dry-run=client -o yaml | kubectl apply -f -
+
+# 6. Deploy MCPRoute with OAuth
+echo "6. Deploying MCPRoute with OAuth..."
+kubectl apply -f k8s/mcp-route.yaml
+
+# 7. Get OAuth credentials
+echo "7. Getting OAuth credentials..."
 sleep 3
 kubectl logs deployment/oauth | grep -E "CLIENT_ID|CLIENT_SECRET|ISSUER" >.env
 cat .env
 
-# 7. Wait for gateway
-echo "7. Waiting for gateway..."
+# 8. Wait for gateway
+echo "8. Waiting for gateway..."
 sleep 10 # Wait for gateway service to be created
 
-# 8. Port forward
-echo "8. Setting up port forward..."
-GATEWAY_SVC=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-name=mcp-gateway -o jsonpath='{.items[0].metadata.name}')
+# 9. Port forward
+echo "9. Setting up port forward..."
+GATEWAY_SVC=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-name=aigw-run -o jsonpath='{.items[0].metadata.name}')
 echo "Gateway service: $GATEWAY_SVC"
 kubectl port-forward -n envoy-gateway-system service/$GATEWAY_SVC 8080:8080 >/dev/null 2>&1 &
 PF_PID=$!
