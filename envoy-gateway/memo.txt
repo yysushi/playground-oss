@@ -1,0 +1,99 @@
+https://gateway.envoyproxy.io/docs/tasks/quickstart/
+
+- kind
+kind create cluster
+kubectl cluster-info --context kind-kind
+
+- envoy-gateway
+
+helm install eg oci://docker.io/envoyproxy/gateway-helm --version v1.6.3 -n envoy-gateway-system --create-namespace
+
+helm list -n envoy-gateway-system
+
+kubectl wait --timeout=5m -n envoy-gateway-system deployment/envoy-gateway --for=condition=Available
+
+- quickstart app
+
+kubectl apply -f https://github.com/envoyproxy/gateway/releases/download/v1.6.3/quickstart.yaml -n default
+
+- test with curl
+
+export ENVOY_SERVICE=$(kubectl get svc -n envoy-gateway-system --selector=gateway.envoyproxy.io/owning-gateway-namespace=default,gateway.envoyproxy.io/owning-gateway-name=eg -o jsonpath='{.items[0].metadata.name}')
+kubectl -n envoy-gateway-system port-forward service/${ENVOY_SERVICE} 8888:80 &
+
+
+$ curl --verbose --header "Host: www.example.com" http://localhost:8888/get | jq
+
+* Host localhost:8888 was resolved.
+* IPv6: ::1
+* IPv4: 127.0.0.1
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0*   Trying [::1]:8888...
+* Connected to localhost (::1) port 8888
+> GET /get HTTP/1.1
+> Host: www.example.com
+> User-Agent: curl/8.7.1
+> Accept: */*
+> 
+* Request completely sent off
+Handling connection for 8888
+< HTTP/1.1 200 OK
+< content-type: application/json
+< x-content-type-options: nosniff
+< date: Fri, 30 Jan 2026 14:17:53 GMT
+< content-length: 465
+< 
+{ [465 bytes data]
+100   465  100   465    0     0  53559      0 --:--:-- --:--:-- --:--:-- 58125
+* Connection #0 to host localhost left intact
+{
+  "path": "/get",
+  "host": "www.example.com",
+  "method": "GET",
+  "proto": "HTTP/1.1",
+  "headers": {
+    "Accept": [
+      "*/*"
+    ],
+    "User-Agent": [
+      "curl/8.7.1"
+    ],
+    "X-Envoy-External-Address": [
+      "127.0.0.1"
+    ],
+    "X-Forwarded-For": [
+      "10.244.0.9"
+    ],
+    "X-Forwarded-Proto": [
+      "http"
+    ],
+    "X-Request-Id": [
+      "8230fab9-2381-4587-8752-9a6e5386a010"
+    ]
+  },
+  "namespace": "default",
+  "ingress": "",
+  "service": "",
+  "pod": "backend-86c6c76f-zfcz4"
+}
+
+
+jobs
+kill %1
+
+- summary
+
+see resources
+curl https://github.com/envoyproxy/gateway/releases/download/v1.6.3/quickstart.yaml -v -L | less
+
+resources
+1. gateway -> httproute
+2. deployment -> pod
+
+traffic
+gateway -> service -> backend
+
+
+
+
