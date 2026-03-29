@@ -10,10 +10,10 @@ import (
 	"google.golang.org/adk/cmd/launcher"
 	"google.golang.org/adk/cmd/launcher/full"
 
-	// "google.golang.org/adk/model/gemini"
 	"github.com/achetronic/adk-utils-go/genai/anthropic"
 	"google.golang.org/adk/tool"
-	"google.golang.org/adk/tool/geminitool"
+
+	internaltools "sample/internal/tools"
 )
 
 func main() {
@@ -27,21 +27,24 @@ func main() {
 		// ThinkingBudgetTokens: getEnvInt("THINKING_BUDGET_TOKENS", 0),
 	})
 
-	timeAgent, err := llmagent.New(llmagent.Config{
-		Name:        "hello_time_agent",
+	multiplier, err := internaltools.NewMultiplierTool()
+	if err != nil {
+		log.Fatalf("Failed to create agent: %v", err)
+	}
+
+	calculatorAgent, err := llmagent.New(llmagent.Config{
+		Name:        "hello_calculator_agent",
 		Model:       model,
-		Description: "Tells the current time in a specified city.",
-		Instruction: "You are a helpful assistant that tells the current time in a city.",
-		Tools: []tool.Tool{
-			geminitool.GoogleSearch{},
-		},
+		Description: "Tells an expression to calculate",
+		Instruction: "You are a helpful assistant that calculates something.",
+		Tools:       []tool.Tool{multiplier},
 	})
 	if err != nil {
 		log.Fatalf("Failed to create agent: %v", err)
 	}
 
 	config := &launcher.Config{
-		AgentLoader: agent.NewSingleLoader(timeAgent),
+		AgentLoader: agent.NewSingleLoader(calculatorAgent),
 	}
 
 	l := full.NewLauncher()
