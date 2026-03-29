@@ -1,0 +1,11 @@
+source_up
+
+# https://z.ai/manage-apikey/apikey-list
+export ANTHROPIC_API_KEY="something"
+
+# export ANTHROPIC_DEFAULT_OPUS_MODEL="zai/glm-5.1"
+export ANTHROPIC_DEFAULT_OPUS_MODEL="GLM-5.1"
+# export ANTHROPIC_BASE_URL="https://api.z.ai/api/coding/paas/v4"
+export ANTHROPIC_BASE_URL="https://api.z.ai/api/anthropic"
+# export MAX_OUTPUT_TOKENS=0
+# export THINKING_BUDGET_TOKENS=0
